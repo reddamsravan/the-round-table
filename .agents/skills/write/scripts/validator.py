@@ -238,12 +238,10 @@ class PlainEnglishValidator:
                     in_html_comment = False
                 continue
 
-            # Skip empty lines, table rows, and horizontal dividers
+            # Skip empty lines and table rows
             if not stripped:
                 continue
             if stripped.startswith("|") and stripped.endswith("|"):
-                continue
-            if re.match(r"^[-=_*]{3,}$", stripped):
                 continue
             if stripped.startswith("#"):
                 # Analyze header text without structural constraints
@@ -263,6 +261,8 @@ class PlainEnglishValidator:
         all_sentences: List[str] = []
 
         for _, line in prose_lines:
+            if re.match(r"^[-=_*]{3,}$", line.strip()):
+                continue
             clean_line = re.sub(r"^#+\s*", "", line.strip())
             clean_line = re.sub(r"^\s*([-*+]|\d+\.)\s+", "", clean_line)
             clean_line = re.sub(r"^\s*>\s*", "", clean_line).strip()
@@ -346,6 +346,21 @@ class PlainEnglishValidator:
         clean_line = re.sub(r"^\s*>\s*", "", clean_line).strip()
 
         if not clean_line:
+            return
+
+        # Check for Horizontal Dividers (Rule P008)
+        if re.match(r"^[-=_*]{3,}$", line.strip()):
+            diagnostics.append(
+                Diagnostic(
+                    line=line_num,
+                    column=1,
+                    rule_id="HORIZONTAL_DIVIDER_DISALLOWED",
+                    severity="ERROR",
+                    message=f"Horizontal rule divider '{line.strip()}' is prohibited in Plain English.",
+                    snippet=line.strip(),
+                    suggested_fix="Remove divider line and use markdown headers for section separation."
+                )
+            )
             return
 
         # Mask inline code spans to prevent false positives
@@ -457,6 +472,23 @@ class PlainEnglishValidator:
                     suggested_fix=f"Unwrap '{first_token}' into natural plain language (e.g. 'If...', 'Then...', 'Rule: ...')."
                 )
             )
+
+        # 7. Check for Prohibited Em-Dashes and En-Dashes (Rule P009)
+        for dash_pattern, name in [(r"—", "Em-dash"), (r"–", "En-dash"), (r"(?<=\S)\s*--\s*(?=\S)", "Double-hyphen dash")]:
+            for match in re.finditer(dash_pattern, prose_to_analyze):
+                col = match.start() + 1
+                matched_char = match.group(0)
+                diagnostics.append(
+                    Diagnostic(
+                        line=line_num,
+                        column=col,
+                        rule_id="EM_DASH_DISALLOWED",
+                        severity="ERROR",
+                        message=f"{name} '{matched_char}' is prohibited in Plain English.",
+                        snippet=clean_line,
+                        suggested_fix="Delete the dash or replace with a period, colon, comma, or parentheses."
+                    )
+                )
 
 
 def format_cli_output(file_label: str, diagnostics: List[Diagnostic], metrics: Dict[str, Any]) -> str:

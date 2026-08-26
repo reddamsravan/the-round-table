@@ -90,6 +90,43 @@ def process():
         errors = [d for d in diagnostics if d.severity == "ERROR"]
         self.assertEqual(len(errors), 0, f"Expected 0 errors in code/frontmatter, got: {[d.to_dict() for d in errors]}")
 
+    def test_em_dash_detection(self):
+        text_with_em = "The worker process runs the task — immediately."
+        diagnostics, _ = self.validator.validate_text(text_with_em)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("EM_DASH_DISALLOWED", rule_ids)
+
+        text_with_en = "The worker process executes steps 1 – 5."
+        diagnostics, _ = self.validator.validate_text(text_with_en)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("EM_DASH_DISALLOWED", rule_ids)
+
+        text_with_double_hyphen = "The worker process executes steps 1 -- 5."
+        diagnostics, _ = self.validator.validate_text(text_with_double_hyphen)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("EM_DASH_DISALLOWED", rule_ids)
+
+        text_clean = "The worker process runs the task immediately."
+        diagnostics, _ = self.validator.validate_text(text_clean)
+        errors = [d for d in diagnostics if d.severity == "ERROR"]
+        self.assertEqual(len(errors), 0)
+
+    def test_horizontal_divider_detection(self):
+        text_with_divider = """
+# Section 1
+
+The worker process runs the task.
+
+---
+
+# Section 2
+
+The worker process logs the result.
+"""
+        diagnostics, _ = self.validator.validate_text(text_with_divider)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("HORIZONTAL_DIVIDER_DISALLOWED", rule_ids)
+
     def test_syllable_counter(self):
         self.assertEqual(count_syllables_in_word("use"), 1)
         self.assertEqual(count_syllables_in_word("help"), 1)
@@ -99,3 +136,4 @@ def process():
 
 if __name__ == "__main__":
     unittest.main()
+

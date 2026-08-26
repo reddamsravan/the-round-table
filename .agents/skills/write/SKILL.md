@@ -79,32 +79,39 @@ The agent SHALL delete introductory fluff, throat-clearing preambles, and redund
 ### Rule 7: Structural Bulleting
 The agent SHALL format multi-item lists, branching conditions, and procedures using concise markdown bullet points.
 
+### Rule 8: Prohibited Dashes and Punctuation Ambiguity
+The author SHALL NOT use em-dashes (`—`), en-dashes (`–`), or horizontal rule dividers (`---`).
+The agent SHALL proactively delete all em-dashes, en-dashes, and horizontal rule dividers.
+The agent SHALL use standard markdown headers (`##`, `###`) for section separation.
+
 ## 2. Operational Procedures
 
 ### Procedure A: Inline Text and Stdin Transformation
 WHEN a user or agent provides raw text or pipes via stdin:
 1. The agent SHALL isolate all code snippets, URLs, and structured data payloads.
 2. The agent SHALL rephrase all prose into active SVO, everyday vocabulary, and short sentences.
-3. The agent SHALL verify the candidate text with the validator tool:
+3. The agent SHALL proactively delete all em-dashes, en-dashes, and horizontal rule dividers from prose.
+4. The agent SHALL verify the candidate text with the validator tool:
    ```bash
    echo "<candidate_text>" | python3 .agents/skills/write/scripts/validator.py --json
    ```
-4. IF the validator reports diagnostic errors or a Flesch score below 65, THEN the agent SHALL apply iterative corrections until 0 errors remain.
-5. The agent SHALL return the verified text.
+5. IF the validator reports diagnostic errors or a Flesch score below 65, THEN the agent SHALL apply iterative corrections until 0 errors remain.
+6. The agent SHALL return the verified text.
 
 ### Procedure B: Single File Transformation
 WHEN the user or agent provides a target file path:
 1. The agent SHALL read the target file using the file viewer tool.
 2. The agent SHALL preserve YAML frontmatter headers, code fences, and tables verbatim.
 3. The agent SHALL rephrase markdown headers, paragraphs, and list items into Plain English.
-4. The agent SHALL determine the output destination:
+4. The agent SHALL proactively delete all em-dashes, en-dashes, and horizontal rule dividers from prose.
+5. The agent SHALL determine the output destination:
    - IF the user provides `--in-place`, THEN the agent SHALL overwrite the original file.
    - IF the user does not provide `--in-place`, THEN the agent SHALL write to `{directory}/{stem}.plain.md`.
-5. The agent SHALL validate the destination file:
+6. The agent SHALL validate the destination file:
    ```bash
    python3 .agents/skills/write/scripts/validator.py <target_path> --json
    ```
-6. IF the validator reports violations, THEN the agent SHALL apply iterative corrections until 0 errors remain.
+7. IF the validator reports violations, THEN the agent SHALL apply iterative corrections until 0 errors remain.
 
 ### Procedure C: Directory Batch Processing
 WHEN the user provides a directory path:
@@ -154,4 +161,5 @@ WHEN completing any task with the `write` skill, THEN the agent SHALL verify:
 3. All sentences contain 20 words or fewer.
 4. Zero passive voice constructions remain in prose.
 5. Zero bureaucratic terms from `assets/lexicon.yaml` remain in prose.
-6. All code blocks, tables, and YAML frontmatter match original contents verbatim.
+6. Zero em-dashes (`—`), en-dashes (`–`), or horizontal dividers (`---`) remain in prose.
+7. All code blocks, tables, and YAML frontmatter match original contents verbatim.
