@@ -5,7 +5,7 @@ It gives agents simple workflows, exact specs, clear writing, and fast test chec
 
 ## Skills Catalog
 
-The project provides four core agent skills:
+The project provides five core agent skills:
 
 ### 1. ace-write
 Turns raw text into exact specs.
@@ -33,7 +33,17 @@ It asks questions in rounds, tracks choices, and saves decision logs.
 - **Skill File**: [.agents/skills/grill/SKILL.md](.agents/skills/grill/SKILL.md)
 - **Log Path**: `docs/.prompts-and-prayers/grilling/`
 
-### 4. write
+### 4. task
+Tracks task graphs, subagent jobs, and check steps.
+It tracks states in `docs/.tasks/active.md` and archives old plans.
+- **Slash Command**: `/task`
+- **Skill File**: [.agents/skills/task/SKILL.md](.agents/skills/task/SKILL.md)
+- **Check Script**:
+  ```bash
+  python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
+  ```
+
+### 5. write
 Turns dry technical notes into clear text.
 It uses active voice, simple words, and keeps reading scores high.
 - **Skill File**: [.agents/skills/write/SKILL.md](.agents/skills/write/SKILL.md)
@@ -51,10 +61,12 @@ the-round-table/
 │       ├── ace-write/     # ACE spec skill and checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── grill/         # Design interview skill
+│       ├── task/          # Task graph skill and checker
 │       └── write/         # Clear text skill and checker
 ├── docs/
-│   └── .prompts-and-prayers/
-│       └── grilling/      # Saved design logs
+│   ├── .prompts-and-prayers/
+│   │   └── grilling/      # Saved design logs
+│   └── .tasks/            # Active and archived task graphs
 ├── tests/                 # Unit tests for checkers
 ├── .gitignore
 └── README.md
@@ -73,6 +85,9 @@ You can also run each test script by hand:
 ```bash
 # Check text score
 python3 .agents/skills/write/scripts/validator.py README.md --json
+
+# Check task graph rules
+python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
 
 # Check ACE spec rules
 python3 .agents/skills/ace-write/scripts/validator.py docs/.../artifact.md --json
