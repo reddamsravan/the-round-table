@@ -98,7 +98,7 @@ WHEN implementation work for a task completes:
 GIVEN a task that transitions to `DONE`.
 WHEN code modifications exist in the working tree:
 1. The agent SHALL invoke the `commit` skill.
-2. The agent SHALL format the commit header referencing the task ID.
+2. The agent SHALL draft the commit message following the `commit` skill without referencing local task IDs.
 3. The agent SHALL present the staged diff and commit draft for user confirmation.
 
 ### Procedure E: Interactive Completion and Archiving

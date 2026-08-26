@@ -138,6 +138,23 @@ class TestCommitValidator(unittest.TestCase):
         self.assertEqual(len(errors), 0, f"Autofixed text had errors: {fixed}\nErrors: {[d.to_dict() for d in errors]}")
         self.assertTrue(fixed.startswith("feat(core): add new user authentication model"))
 
+    def test_local_task_reference_rejected(self):
+        text_footer = "feat(core): add feature\n\nCloses TASK-001"
+        diags_footer = self.validator.validate_text(text_footer)
+        self.assertIn("LOCAL_TASK_REFERENCE", [d.rule_id for d in diags_footer])
+
+        text_header = "feat(core): add feature (TASK-001)"
+        diags_header = self.validator.validate_text(text_header)
+        self.assertIn("LOCAL_TASK_REFERENCE", [d.rule_id for d in diags_header])
+
+    def test_autofix_removes_local_task_footer(self):
+        input_text = "feat(core): add feature (TASK-001)\n\nImplementation details.\n\nCloses TASK-001"
+        fixed = self.validator.autofix(input_text)
+        diags = self.validator.validate_text(fixed)
+        errors = [d for d in diags if d.severity == "ERROR"]
+        self.assertEqual(len(errors), 0, f"Errors in autofixed text: {fixed}")
+        self.assertNotIn("TASK-001", fixed)
+
 
 if __name__ == "__main__":
     unittest.main()

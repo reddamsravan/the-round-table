@@ -61,6 +61,10 @@ The agent SHALL NOT use past-tense or continuous verb forms.
 The agent SHALL NOT execute `git commit` autonomously without explicit user approval.
 The agent SHALL present the staged files, the diff summary, and the proposed commit message to the user.
 
+### Rule 5: Exclusion of Local Task References
+The agent SHALL NOT include local task identifiers (such as `TASK-001` or `TASK-xxx`) in commit headers, bodies, or footers.
+The agent SHALL reserve issue footers (`Fixes #<id>`, `Closes #<id>`) strictly for external issue trackers.
+
 ## 2. Operational Procedures
 
 ### Procedure A: Working Tree Inspection and Staging
@@ -87,7 +91,8 @@ WHEN staged changes are ready for commit drafting:
    - The agent SHALL transform the explanation into direct Plain English using the `write` skill.
    - The agent SHALL wrap all body lines at 72 characters.
    - IF the change introduces breaking alterations, THEN the agent SHALL append `BREAKING CHANGE: <description>`.
-   - IF the change resolves tracked issues, THEN the agent SHALL append `Fixes #<id>` or `Closes #<id>`.
+   - The agent SHALL NOT reference local task identifiers in commit headers, bodies, or footers.
+   - IF the change resolves tracked external issues, THEN the agent SHALL append `Fixes #<id>` or `Closes #<id>`.
 
 ### Procedure C: Deterministic Validation and Repair
 WHEN candidate commit message text exists:

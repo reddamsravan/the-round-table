@@ -317,7 +317,21 @@ class CommitValidator:
                 )
             )
 
-        # 8. Body and footers validation
+        # 8. Local task reference check in header
+        if re.search(r"\bTASK-\d+\b", header, re.IGNORECASE):
+            diagnostics.append(
+                Diagnostic(
+                    line=1,
+                    column=1,
+                    rule_id="LOCAL_TASK_REFERENCE",
+                    severity="ERROR",
+                    message="Commit header must not reference local task IDs (e.g. 'TASK-001'). Local task tracking belongs in docs/.tasks/.",
+                    snippet=header,
+                    suggested_fix="Remove local task ID from commit header."
+                )
+            )
+
+        # 9. Body and footers validation
         self._validate_body_and_footers(raw_lines, diagnostics)
 
         return diagnostics
@@ -340,7 +354,7 @@ class CommitValidator:
                 )
             )
 
-        # Check subsequent lines for length violations
+        # Check subsequent lines for length violations and local task references
         in_code_block = False
         for idx in range(2, len(raw_lines)):
             line_num = idx + 1
@@ -352,6 +366,19 @@ class CommitValidator:
 
             if in_code_block:
                 continue
+
+            if re.search(r"\bTASK-\d+\b", line, re.IGNORECASE):
+                diagnostics.append(
+                    Diagnostic(
+                        line=line_num,
+                        column=1,
+                        rule_id="LOCAL_TASK_REFERENCE",
+                        severity="ERROR",
+                        message=f"Commit message must not reference local task ID in '{line.strip()}'. Reserve footers for external issue trackers.",
+                        snippet=line.strip(),
+                        suggested_fix="Remove local task ID reference. Reserve footers for external issue trackers (e.g. 'Fixes #123')."
+                    )
+                )
 
             # Ignore lines containing unbroken URLs
             if "http://" in line or "https://" in line or "file://" in line:
@@ -405,6 +432,10 @@ class CommitValidator:
                 words[0] = NON_IMPERATIVE_VERBS[words[0].lower()]
                 subject = " ".join(words)
 
+            # Strip local task IDs from subject if present
+            subject = re.sub(r"\s*\(?\bTASK-\d+\b\)?", "", subject, flags=re.IGNORECASE).strip()
+            subject = re.sub(r"\s{2,}", " ", subject)
+
             if scope:
                 fixed_header = f"{commit_type}({scope}){breaking}: {subject}"
             else:
@@ -430,6 +461,10 @@ class CommitValidator:
         in_code_block = False
 
         for line in remaining_lines:
+            # Filter out standalone local task references or footers
+            if not in_code_block and re.match(r"^(?:closes|fixes|resolves)?\s*\(?\bTASK-\d+\b\)?\s*$", line.strip(), re.IGNORECASE):
+                continue
+
             if line.strip().startswith("```"):
                 in_code_block = not in_code_block
                 if current_para:
@@ -447,7 +482,10 @@ class CommitValidator:
                     paragraphs.append(current_para)
                     current_para = []
             else:
-                current_para.append(line)
+                # Strip inline local task ID references in text
+                cleaned_line = re.sub(r"\s*\(?\bTASK-\d+\b\)?", "", line, flags=re.IGNORECASE)
+                if cleaned_line.strip():
+                    current_para.append(cleaned_line)
 
         if current_para:
             paragraphs.append(current_para)
