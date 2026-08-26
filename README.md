@@ -3,55 +3,6 @@
 The Round Table is a home for AI coding tools.
 It gives agents simple workflows, exact specs, clear writing, and fast test checks.
 
-## Skills Catalog
-
-The project provides five core agent skills:
-
-### 1. ace-write
-Turns raw text into exact specs.
-It removes doubt, sets strict rules, and builds clean agent contracts.
-- **Skill File**: [.agents/skills/ace-write/SKILL.md](.agents/skills/ace-write/SKILL.md)
-- **Check Script**:
-  ```bash
-  python3 .agents/skills/ace-write/scripts/validator.py <file> --json
-  ```
-
-### 2. commit
-Guides git staging, splits big diffs into clean batches, and writes standard commit notes.
-It keeps subject lines short, active, and clear.
-- **Slash Command**: `/commit`
-- **Skill File**: [.agents/skills/commit/SKILL.md](.agents/skills/commit/SKILL.md)
-- **Check Script**:
-  ```bash
-  python3 .agents/skills/commit/scripts/validator.py <file> --json
-  ```
-
-### 3. grill
-Asks users clear questions to test plans, ideas, and system design.
-It asks questions in rounds, tracks choices, and saves decision logs.
-- **Slash Command**: `/grill`
-- **Skill File**: [.agents/skills/grill/SKILL.md](.agents/skills/grill/SKILL.md)
-- **Log Path**: `docs/.prompts-and-prayers/grilling/`
-
-### 4. task
-Tracks task graphs, subagent jobs, and check steps.
-It tracks states in `docs/.tasks/active.md` and archives old plans.
-- **Slash Command**: `/task`
-- **Skill File**: [.agents/skills/task/SKILL.md](.agents/skills/task/SKILL.md)
-- **Check Script**:
-  ```bash
-  python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
-  ```
-
-### 5. write
-Turns dry technical notes into clear text.
-It uses active voice, simple words, and keeps reading scores high.
-- **Skill File**: [.agents/skills/write/SKILL.md](.agents/skills/write/SKILL.md)
-- **Check Script**:
-  ```bash
-  python3 .agents/skills/write/scripts/validator.py <file> --json
-  ```
-
 ## Project Structure
 
 ```text
