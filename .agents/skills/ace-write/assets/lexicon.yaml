@@ -1,0 +1,53 @@
+# Agentic ACE Project Lexicon & Terminology Registry
+version: "1.0.0"
+dialect: "Agentic ACE"
+
+entities:
+  - name: "Agent"
+    description: "An autonomous LLM execution unit that processes tasks."
+  - name: "Subagent"
+    description: "A specialized agent dispatched by a parent agent to execute a subtask."
+  - name: "Task"
+    description: "A discrete unit of work assigned to an agent."
+  - name: "Skill"
+    description: "An on-demand procedural capability defined in SKILL.md."
+  - name: "Tool"
+    description: "A programmatic function or API callable by an agent."
+  - name: "Artifact"
+    description: "A structured document or code output produced by an agent."
+  - name: "Workspace"
+    description: "The root directory containing project source files and configuration."
+
+contract_keywords:
+  - "GIVEN"
+  - "WHEN"
+  - "THEN"
+  - "INVARIANT"
+  - "PRECONDITION"
+  - "POSTCONDITION"
+
+modal_keywords:
+  allowed:
+    - "SHALL"
+    - "SHALL NOT"
+    - "MUST"
+    - "MUST NOT"
+  disallowed:
+    - "should"
+    - "could"
+    - "might"
+    - "would"
+    - "may"
+    - "ought"
+
+disallowed_terms:
+  - term: "as fast as possible"
+    replacement: "within the specified timeout"
+  - term: "user friendly"
+    replacement: "standard command-line interface"
+  - term: "best effort"
+    replacement: "up to N retry attempts"
+  - term: "etc"
+    replacement: "exhaustive list"
+  - term: "and so on"
+    replacement: "exhaustive list"
