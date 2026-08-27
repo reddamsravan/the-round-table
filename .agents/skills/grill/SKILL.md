@@ -1,6 +1,9 @@
 ---
+# Derived work from Matt Pocock's grilling skill.
 name: grill
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases (such as 'grill me', 'stress-test my idea', 'interview me on this plan', '/grill', '/grill-me').
+description: >-
+  The agent SHALL interview the user across a structured design tree to stress-test plans, architectures, and design trade-offs.
+  WHEN the user requests plan validation or invokes grill triggers ('grill me', 'stress-test my idea', '/grill', '/grill-me'), THEN the agent SHALL activate this skill.
 ---
 
 # Grilling: Decision Tree Interview Skill
@@ -28,13 +31,13 @@ The agent SHALL identify core decisions, prerequisite dependencies, and downstre
 The agent SHALL format each question within a round using text-based markdown:
 
 ```markdown
-❓ **Q1**: **<question title>**: <question body, explaining context and listing multiple choices/trade-offs>
+**Q1**: **<question title>**: <question body, explaining context and listing multiple choices/trade-offs>
 
-➡️ <your recommended answer with brief rationale>
+Recommendation: <your recommended answer with brief rationale>
 
-❓ **Q2**: **<question title>**: <question body, explaining context and listing multiple choices/trade-offs>
+**Q2**: **<question title>**: <question body, explaining context and listing multiple choices/trade-offs>
 
-➡️ <your recommended answer with brief rationale>
+Recommendation: <your recommended answer with brief rationale>
 ```
 
 ## 3. Rules & Principles
