@@ -12,6 +12,7 @@ the-round-table/
 │       ├── ace-write/     # ACE spec skill and checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── grill/         # Design interview skill
+│       ├── learn/         # 30-day personalized curriculum skill
 │       ├── task/          # Task graph skill and checker
 │       └── write/         # Clear text skill and checker
 ├── docs/
