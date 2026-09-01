@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1: Variables and Data Types -- Python Basics</title>
+  <link rel="stylesheet" href="lesson.css">
+</head>
+<body>
+
+  <h1>Day 1: Variables and Data Types</h1>
+
+  <blockquote class="meta">
+    <strong>Curriculum</strong>: Python Basics |
+    <strong>Level</strong>: beginner |
+    <strong>Time budget</strong>: 30 min |
+    <strong>Goal</strong>: get a job as a Python developer
+  </blockquote>
+
+  <!-- 1. Learning Objectives -->
+  <section class="objectives">
+    <h2>Learning Objectives</h2>
+    <ul>
+      <li>Define what a variable is and explain why programs use them.</li>
+      <li>Identify the four core Python data types: <code>int</code>, <code>float</code>, <code>str</code>, and <code>bool</code>.</li>
+      <li>Write and run a Python statement that assigns a value to a variable.</li>
+    </ul>
+  </section>
+
+  <!-- 2. Concept Explanation -->
+  <section class="concept">
+    <h2>Concept Explanation</h2>
+    <p>A variable is a named container that stores a value in your program's memory. Think of it like a labelled box: the label is the variable name, and whatever you put inside is the value.</p>
+    <p>In Python, you create a variable by writing its name, an equals sign, and a value:</p>
+    <pre><code class="language-python">age = 25
+name = "Alice"
+price = 9.99
+is_active = True</code></pre>
+    <p>Python figures out the data type automatically based on what you assign. This is called dynamic typing. You do not need to declare the type upfront.</p>
+    <p>The four most common types are:</p>
+    <ul>
+      <li><strong>int</strong> — whole numbers, positive or negative (e.g., <code>42</code>, <code>-7</code>)</li>
+      <li><strong>float</strong> — decimal numbers (e.g., <code>3.14</code>, <code>-0.5</code>)</li>
+      <li><strong>str</strong> — text wrapped in quotes (e.g., <code>"hello"</code>, <code>'world'</code>)</li>
+      <li><strong>bool</strong> — only two values: <code>True</code> or <code>False</code></li>
+    </ul>
+    <p>You can check a variable's type using the built-in <code>type()</code> function:</p>
+    <pre><code class="language-python">print(type(age))        # &lt;class 'int'&gt;
+print(type(name))       # &lt;class 'str'&gt;
+print(type(price))      # &lt;class 'float'&gt;
+print(type(is_active))  # &lt;class 'bool'&gt;</code></pre>
+  </section>
+
+  <!-- 3. Real-World Examples -->
+  <section class="examples">
+    <h2>Real-World Examples</h2>
+    <article>
+      <p><strong>Example 1:</strong> A shopping cart stores the item count as an <code>int</code> (<code>items = 3</code>) and the total price as a <code>float</code> (<code>total = 47.50</code>). Using the correct types ensures arithmetic works correctly.</p>
+    </article>
+    <article>
+      <p><strong>Example 2:</strong> A login system stores a username as a <code>str</code> (<code>username = "alice123"</code>) and whether the user is logged in as a <code>bool</code> (<code>logged_in = False</code>). The bool drives conditional logic later.</p>
+    </article>
+    <article>
+      <p><strong>Example 3:</strong> A weather app stores temperature as a <code>float</code> (<code>temperature = 23.5</code>) so it can handle decimal readings from sensors and display accurate values.</p>
+    </article>
+  </section>
+
+  <!-- 4. Comprehension Questions -->
+  <section class="questions">
+    <h2>Comprehension Questions</h2>
+    <p>Answer each question in your own words before revealing the answer.</p>
+
+    <p><strong>Question 1:</strong> What does Python do automatically when you write <code>score = 100</code>?</p>
+    <details>
+      <summary>Show answer</summary>
+      <p>Python creates a variable named <code>score</code>, assigns the integer value <code>100</code> to it, and stores it in memory. Python also infers the type as <code>int</code> without you specifying it.</p>
+    </details>
+
+    <p><strong>Question 2:</strong> What is the difference between <code>42</code> and <code>42.0</code> in Python?</p>
+    <details>
+      <summary>Show answer</summary>
+      <p><code>42</code> is an <code>int</code> (a whole number with no decimal component). <code>42.0</code> is a <code>float</code> (a number with a decimal point). They look similar but behave differently in some operations, such as division and type checking.</p>
+    </details>
+
+    <p><strong>Question 3:</strong> Why would you use <code>True</code> or <code>False</code> instead of <code>1</code> or <code>0</code>?</p>
+    <details>
+      <summary>Show answer</summary>
+      <p>Using <code>True</code> and <code>False</code> (the <code>bool</code> type) makes your code more readable and communicates intent clearly. Boolean variables also work directly with <code>if</code> statements and logical operators, which makes the code easier to understand and maintain.</p>
+    </details>
+  </section>
+
+  <!-- 5. Practical Tasks -->
+  <section class="tasks">
+    <h2>Practical Tasks</h2>
+
+    <h3>Core Task (15 to 30 min)</h3>
+    <p>Open a Python interpreter or create a file called <code>day_01.py</code>. Write five variable assignments using at least three different data types. Print each variable and its type using <code>print()</code> and <code>type()</code>.</p>
+    <p>Done when:</p>
+    <ul>
+      <li><label><input type="checkbox"> The script runs without errors.</label></li>
+      <li><label><input type="checkbox"> At least one variable uses <code>int</code>, one uses <code>str</code>, and one uses <code>float</code> or <code>bool</code>.</label></li>
+      <li><label><input type="checkbox"> Each variable's name clearly describes what it stores.</label></li>
+    </ul>
+
+    <h3>Stretch Task (45 to 90 min)</h3>
+    <p>Build a small personal profile program. Ask the user to input their name, age, and a fun fact about themselves. Store each input in a correctly typed variable. Print a formatted summary sentence using all three variables.</p>
+    <p>Done when:</p>
+    <ul>
+      <li><label><input type="checkbox"> The program uses <code>input()</code> to collect all three values.</label></li>
+      <li><label><input type="checkbox"> The program converts age from <code>str</code> to <code>int</code> using <code>int()</code>.</label></li>
+      <li><label><input type="checkbox"> The program prints a sentence like: <code>"Hi, I'm Alice, I'm 25 years old, and I love hiking."</code></label></li>
+      <li><label><input type="checkbox"> The script runs without errors on at least two different inputs.</label></li>
+    </ul>
+  </section>
+
+  <!-- 6. Further Reading -->
+  <section class="reading">
+    <h2>Further Reading</h2>
+    <ul>
+      <li><em>Python Crash Course</em> by Eric Matthes — Chapter 2 covers variables and data types with clear beginner examples.</li>
+      <li>Documentation: "Python docs: Built-in Types" — the official reference for all Python types and their behaviour.</li>
+      <li>Search: "Python variables and data types tutorial for beginners"</li>
+    </ul>
+  </section>
+
+</body>
+</html>

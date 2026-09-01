@@ -2,7 +2,8 @@
 name: learn
 description: >-
   Generates a personalized 30-day learning curriculum on any topic via a session-based intake wizard.
-  Delivers lessons lazily on request. Tracks progress with per-day notes and sub-lesson chaining.
+  Delivers lessons lazily on request as standalone HTML files loaded from an external CSS asset.
+  Tracks progress with per-day notes and sub-lesson chaining.
   Supports gap handling, curriculum switching, and lesson regeneration.
   Activate when the user invokes `/learn <topic>` or requests their next lesson in plain English.
 ---
@@ -81,9 +82,10 @@ INVARIANT the agent SHALL NOT proceed to curriculum generation until the user su
 GIVEN the user supplies all four intake fields.
 WHEN intake completes:
 1. The agent SHALL create the directory `docs/learn/<slug>/`.
-2. The agent SHALL generate `docs/learn/<slug>/curriculum.md`.
-3. `curriculum.md` SHALL list 30 rows. Each row SHALL contain a day number, topic title, and one-sentence learning objective.
-4. The agent SHALL generate `docs/learn/<slug>/progress.md` with this YAML frontmatter:
+2. The agent SHALL copy `.agents/skills/learn/assets/lesson.css` into `docs/learn/<slug>/lesson.css`.
+3. The agent SHALL generate `docs/learn/<slug>/curriculum.md`.
+4. `curriculum.md` SHALL list 30 rows. Each row SHALL contain a day number, topic title, and one-sentence learning objective.
+5. The agent SHALL generate `docs/learn/<slug>/progress.md` with this YAML frontmatter:
 
 ```yaml
 ---
@@ -95,7 +97,7 @@ completed_days: []
 ---
 ```
 
-5. The agent SHALL write a human-readable journal section below the YAML frontmatter in `progress.md`.
+6. The agent SHALL write a human-readable journal section below the YAML frontmatter in `progress.md`.
 INVARIANT the agent SHALL NOT mark two curricula as `active` simultaneously.
 
 ## 3. Lesson Delivery
@@ -107,10 +109,11 @@ WHEN the agent receives the lesson request:
 1. The agent SHALL read `progress.md` to determine `current_day`.
 2. The agent SHALL check the `completed_at` timestamp of the last entry in `completed_days`.
 3. IF the last `completed_at` timestamp is more than 24 hours before the current time, THEN the agent SHALL execute Procedure F before generating the lesson.
-4. The agent SHALL generate `docs/learn/<slug>/day-NN.md` using `.agents/skills/learn/assets/lesson.md`.
-5. The filename SHALL use zero-padded two-digit day numbers (e.g., `day-01.md`, `day-12.md`).
-6. The agent SHALL also create `docs/learn/<slug>/day-NN-notes.md` using `.agents/skills/learn/assets/notes.md`.
-7. The agent SHALL execute Procedure M on `day-NN.md` to apply the readability pass.
+4. IF `docs/learn/<slug>/lesson.css` does not exist, THEN the agent SHALL copy `.agents/skills/learn/assets/lesson.css` into `docs/learn/<slug>/lesson.css`.
+5. The agent SHALL generate `docs/learn/<slug>/day-NN.html` using `.agents/skills/learn/assets/lesson.md` as the HTML template.
+6. The filename SHALL use zero-padded two-digit day numbers (e.g., `day-01.html`, `day-12.html`).
+7. The agent SHALL also create `docs/learn/<slug>/day-NN-notes.md` using `.agents/skills/learn/assets/notes.md`.
+8. The agent SHALL execute Procedure M on `day-NN.html` to apply the readability pass.
 INVARIANT the agent SHALL NOT pre-generate lesson files the user has not yet requested.
 INVARIANT the agent SHALL NOT overwrite an existing `day-NN-notes.md`.
 
@@ -142,26 +145,26 @@ INVARIANT the agent SHALL NOT advance `current_day` without an explicit completi
 
 GIVEN the `## Questions I Still Have` section contains non-empty content.
 WHEN the agent evaluates sub-lesson eligibility:
-1. The agent SHALL count files matching the pattern `day-NN-V1.*.md` in the curriculum directory.
+1. The agent SHALL count files matching the pattern `day-NN-V1.*.html` in the curriculum directory.
 2. IF the count is less than 3, THEN:
    a. The agent SHALL set M to the count incremented by 1.
-   b. The agent SHALL generate `docs/learn/<slug>/day-NN-V1.M.md` addressing the open questions.
-   c. The agent SHALL execute Procedure M on `day-NN-V1.M.md` to apply the readability pass.
+   b. The agent SHALL generate `docs/learn/<slug>/day-NN-V1.M.html` addressing the open questions.
+   c. The agent SHALL execute Procedure M on `day-NN-V1.M.html` to apply the readability pass.
    d. The agent SHALL instruct the user to clear `## Questions I Still Have` in `day-NN-notes.md` after reviewing the sub-lesson.
 3. IF the count equals 3, THEN:
    a. The agent SHALL inform the user that the curriculum used all 3 sub-lesson slots.
    b. The agent SHALL recommend external resources for the remaining questions.
    c. The agent SHALL execute Procedure I.
-INVARIANT the agent SHALL NOT generate a file named `day-NN-V1.4.md` or beyond.
+INVARIANT the agent SHALL NOT generate a file named `day-NN-V1.4.html` or beyond.
 
 The sub-lesson chaining sequence SHALL operate as follows:
 - Day N completion signal triggers a check of `day-NN-notes.md`.
-- IF open questions exist, THEN the agent generates `day-NN-V1.1.md`.
-- `day-NN-V1.1.md` completion triggers a re-read of `day-NN-notes.md`.
-- IF open questions remain, THEN the agent generates `day-NN-V1.2.md`.
-- `day-NN-V1.2.md` completion triggers a re-read of `day-NN-notes.md`.
-- IF open questions remain, THEN the agent generates `day-NN-V1.3.md`.
-- After `day-NN-V1.3.md` completion, the agent SHALL NOT generate further sub-lessons.
+- IF open questions exist, THEN the agent generates `day-NN-V1.1.html`.
+- `day-NN-V1.1.html` completion triggers a re-read of `day-NN-notes.md`.
+- IF open questions remain, THEN the agent generates `day-NN-V1.2.html`.
+- `day-NN-V1.2.html` completion triggers a re-read of `day-NN-notes.md`.
+- IF open questions remain, THEN the agent generates `day-NN-V1.3.html`.
+- After `day-NN-V1.3.html` completion, the agent SHALL NOT generate further sub-lessons.
 
 ### Procedure I: Advance Day
 
@@ -211,28 +214,29 @@ INVARIANT the agent SHALL NOT start a new intake wizard for a resume action.
 
 GIVEN the user signals dissatisfaction with a lesson.
 WHEN the agent receives the regeneration request:
-1. The agent SHALL count files matching the pattern `day-NN-v*.md` in the curriculum directory.
+1. The agent SHALL count files matching the pattern `day-NN-v*.html` in the curriculum directory.
 2. IF the count equals 3, THEN the agent SHALL inform the user that the regeneration cap applies.
 3. IF the count equals 3, THEN the agent SHALL recommend manual editing or external resources.
 4. IF the count is less than 3, THEN:
    a. The agent SHALL ask the user to identify the issue from these options: below my level, above my level, too long, wrong focus, other.
    b. The user SHALL select or describe the issue before the agent regenerates.
-   c. The agent SHALL rename `day-NN.md` to `day-NN-v<K>.md` where K is the next backup index.
-   d. The agent SHALL generate a new `day-NN.md` tailored to the user's stated issue.
-   e. The agent SHALL execute Procedure M on the new `day-NN.md` to apply the readability pass.
+   c. The agent SHALL rename `day-NN.html` to `day-NN-v<K>.html` where K is the next backup index.
+   d. The agent SHALL generate a new `day-NN.html` tailored to the user's stated issue.
+   e. The agent SHALL execute Procedure M on the new `day-NN.html` to apply the readability pass.
 INVARIANT the agent SHALL NOT delete any backup lesson file.
 
 ## 8. Lesson File Structure
 
 The agent SHALL generate every lesson file to match the structure in `.agents/skills/learn/assets/lesson.md`.
-The agent SHALL anchor all generated lesson content to `.agents/skills/learn/references/day-01-sample.md`.
+The agent SHALL anchor all generated lesson content to `.agents/skills/learn/references/day-01-sample.html`.
 The agent SHALL scale content depth to match the `level` and `time_budget` fields from intake.
 
+Each lesson file SHALL be a valid HTML document with the extension `.html`.
 Each lesson file SHALL contain the following sections in order:
-1. Learning objectives (bulleted list)
-2. Concept explanation (prose)
+1. Learning objectives (unordered list)
+2. Concept explanation (prose paragraphs, with code blocks inside `<pre><code>` elements)
 3. Real-world examples (2 to 3 examples)
-4. Comprehension questions (3 to 5 items, each followed by an inline `<details>` collapsible answer block)
+4. Comprehension questions (3 to 5 items, each followed by a `<details>` collapsible answer block)
 5. Practical tasks (one core task scoped to 15 to 30 minutes, one stretch task scoped to 45 to 90 minutes)
 6. Further reading (named resources and search terms, no live URLs)
 
@@ -251,18 +255,20 @@ WHEN the agent finalizes the file:
 3. For each block, the agent SHALL apply these rules:
    - Prose paragraphs and bullet lists: rephrase into Plain English (Flesch score >= 65).
    - `<details>` answer blocks: rephrase the prose answer text inside them.
-   - Code fences tagged with a language (e.g., `python`, `bash`, `yaml`): do NOT rephrase; preserve verbatim.
-   - YAML frontmatter: do NOT rephrase; preserve verbatim.
+   - `<pre><code>` blocks: do NOT rephrase; preserve verbatim.
+   - HTML attributes, tag names, and structural markup: do NOT rephrase; preserve verbatim.
    - Tables: rephrase prose content in cells; do NOT alter column structure or data values.
-4. The agent SHALL validate the file using the `write` skill validator:
+4. The agent SHALL strip all HTML tags from the file content to extract plain prose text.
+5. The agent SHALL validate the extracted prose using the `write` skill validator:
    ```bash
    python3 .agents/skills/write/scripts/validator.py <file_path> --json
    ```
-5. The agent SHALL check the Flesch Reading Ease score and prose violation count from the output.
-6. IF the score is below 65 or violations exist, THEN the agent SHALL rephrase prose blocks and re-validate.
-7. The agent SHALL iterate steps 4 to 6 until the score meets or exceeds 65 and violations equal 0.
-8. The agent SHALL overwrite the target file with the validated Plain English version.
-INVARIANT the agent SHALL NOT alter executable code, commands, data structures, or syntax inside language-tagged code fences.
+6. The agent SHALL check the Flesch Reading Ease score and prose violation count from the output.
+7. IF the score is below 65 or violations exist, THEN the agent SHALL rephrase prose blocks and re-validate.
+8. The agent SHALL iterate steps 5 to 7 until the score meets or exceeds 65 and violations equal 0.
+9. The agent SHALL re-embed the validated prose back into the HTML structure.
+10. The agent SHALL overwrite the target file with the final HTML version.
+INVARIANT the agent SHALL NOT alter executable code, commands, data structures, or syntax inside `<pre><code>` blocks.
 INVARIANT the agent SHALL NOT apply Procedure M to `day-NN-notes.md` or `progress.md`.
 
 ## 10. Global Invariants
@@ -271,3 +277,4 @@ INVARIANT the agent SHALL NOT generate curriculum content before completing the 
 INVARIANT the agent SHALL NOT advance `current_day` beyond 30.
 INVARIANT the agent SHALL NOT compute or display streak counts.
 INVARIANT the agent SHALL NOT implement any export command or mechanism.
+INVARIANT the agent SHALL NOT convert `day-NN-notes.md` files to HTML; notes files SHALL remain in `.md` format.

@@ -1,82 +1,93 @@
-# Day {N}: {Title}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day {N}: {Title} -- {topic}</title>
+  <link rel="stylesheet" href="lesson.css">
+</head>
+<body>
 
-> **Curriculum**: {topic} | **Level**: {level} | **Time budget**: {time_budget} min | **Goal**: {goal}
+  <h1>Day {N}: {Title}</h1>
 
-## Learning Objectives
+  <blockquote class="meta">
+    <strong>Curriculum</strong>: {topic} |
+    <strong>Level</strong>: {level} |
+    <strong>Time budget</strong>: {time_budget} min |
+    <strong>Goal</strong>: {goal}
+  </blockquote>
 
-- {Objective 1}
-- {Objective 2}
-- {Objective 3}
+  <!-- 1. Learning Objectives -->
+  <section class="objectives">
+    <h2>Learning Objectives</h2>
+    <ul>
+      <li>{Objective}</li>
+    </ul>
+  </section>
 
-## Concept Explanation
+  <!-- 2. Concept Explanation -->
+  <section class="concept">
+    <h2>Concept Explanation</h2>
+    <p>{prose explanation placeholder}</p>
+  </section>
 
-{Prose explanation of the day's core concept. Scale depth to the user's level and time budget.
-Beginner: plain language, analogies, no assumed knowledge.
-Intermediate: assume foundational knowledge, introduce mechanics and trade-offs.
-Advanced: dive into internals, edge cases, and design rationale.}
+  <!-- 3. Real-World Examples -->
+  <section class="examples">
+    <h2>Real-World Examples</h2>
+    <article>
+      <p><strong>Example 1:</strong> {description placeholder}</p>
+    </article>
+    <article>
+      <p><strong>Example 2:</strong> {description placeholder}</p>
+    </article>
+  </section>
 
-## Real-World Examples
+  <!-- 4. Comprehension Questions -->
+  <section class="questions">
+    <h2>Comprehension Questions</h2>
+    <p>Answer each question in your own words before revealing the answer.</p>
 
-**Example 1**: {Concrete scenario where this concept applies in practice}
+    <p><strong>Question 1:</strong> {question}</p>
+    <details>
+      <summary>Show answer</summary>
+      <p>{answer}</p>
+    </details>
 
-**Example 2**: {A second scenario from a different context or angle}
+    <p><strong>Question 2:</strong> {question}</p>
+    <details>
+      <summary>Show answer</summary>
+      <p>{answer}</p>
+    </details>
+  </section>
 
-**Example 3** *(optional)*: {A third scenario if the concept benefits from additional illustration}
+  <!-- 5. Practical Tasks -->
+  <section class="tasks">
+    <h2>Practical Tasks</h2>
 
-## Comprehension Questions
+    <h3>Core Task (15 to 30 min)</h3>
+    <p>{description}</p>
+    <p>Done when:</p>
+    <ul>
+      <li><label><input type="checkbox"> {criterion}</label></li>
+    </ul>
 
-Answer each question in your own words before revealing the answer.
+    <h3>Stretch Task (45 to 90 min)</h3>
+    <p>{description}</p>
+    <p>Done when:</p>
+    <ul>
+      <li><label><input type="checkbox"> {criterion}</label></li>
+    </ul>
+  </section>
 
-**Question 1**: {Question testing recall or understanding of a key point}
+  <!-- 6. Further Reading -->
+  <section class="reading">
+    <h2>Further Reading</h2>
+    <ul>
+      <li>{book}</li>
+      <li>{documentation}</li>
+      <li>{search term}</li>
+    </ul>
+  </section>
 
-<details>
-<summary>Show answer</summary>
-
-{Clear, concise answer. 2 to 4 sentences maximum.}
-
-</details>
-
-**Question 2**: {Question requiring the user to apply or explain the concept}
-
-<details>
-<summary>Show answer</summary>
-
-{Clear, concise answer.}
-
-</details>
-
-**Question 3**: {Question testing a nuance, trade-off, or common misconception}
-
-<details>
-<summary>Show answer</summary>
-
-{Clear, concise answer.}
-
-</details>
-
-*(Add Questions 4 and 5 here if the lesson covers more than one sub-concept.)*
-
-## Practical Tasks
-
-### Core Task (15 to 30 min)
-
-{Task description: clear, actionable, achievable within the time window.}
-
-**Done when:**
-- [ ] {Acceptance criterion 1}
-- [ ] {Acceptance criterion 2}
-
-### Stretch Task (45 to 90 min)
-
-{Task description: extends the core task or explores a related challenge. Suitable for users with more time or seeking deeper practice.}
-
-**Done when:**
-- [ ] {Acceptance criterion 1}
-- [ ] {Acceptance criterion 2}
-- [ ] {Acceptance criterion 3}
-
-## Further Reading
-
-- *{Book title}* by {Author} — {one-line description of relevance}
-- Documentation: {Official documentation name, e.g., "Python docs: Built-in Types"}
-- Search: "{Recommended search term for further exploration}"
+</body>
+</html>
