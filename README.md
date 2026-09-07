@@ -10,18 +10,56 @@ the-round-table/
 ├── .agents/
 │   └── skills/
 │       ├── ace-write/     # ACE spec skill and checker
+│       ├── agile/         # Agile team orchestrator
+│       ├── architect/     # System design and plan checker
 │       ├── commit/        # Commit note skill and checker
+│       ├── developer/     # Task execution and test checker
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
+│       ├── po/            # Product owner story checker
+│       ├── qa/            # Test and code review checker
+│       ├── review/        # 8-concern code review skill
+│       ├── scrum-master/  # Sprint release and retro checker
 │       ├── task/          # Task graph skill and checker
+│       ├── ux-designer/   # User flow and wireframe checker
 │       └── write/         # Clear text skill and checker
 ├── docs/
-│   ├── .prompts-and-prayers/
-│   │   └── grilling/      # Saved design logs
-│   └── .tasks/            # Active and archived task graphs
+│   └── .prompts-and-prayers/
+│       ├── backlog/       # Feature backlog ledger
+│       ├── grilling/      # Saved design logs
+│       └── sprints/       # Sprint workspaces and artifacts
 ├── tests/                 # Unit tests for checkers
 ├── .gitignore
 └── README.md
+```
+
+## Agile Team Workflow
+
+The repo provides a full agile squad for building software.
+The team works through five steps:
+
+1. **Define**: The `po` and `ux-designer` skills draft user stories and screen flows.
+2. **Review**: The `architect` skill plans system design and engineering tasks.
+3. **Build**: The `developer` skill writes code and runs unit tests.
+4. **Verify**: The `qa` skill checks test runs and reviews code changes.
+5. **Repeat**: The `scrum-master` skill logs releases and prepares git commits.
+
+The human acts as the leader. The agent stops for your approval at each key step.
+
+### Example Run
+
+Start a full sprint with one command:
+
+```text
+/agile
+```
+
+You can also run any skill on its own:
+
+```text
+/po            # Ask the PO to refine a user story
+/ux-designer   # Ask the UX designer for a screen flow
+/qa            # Ask QA to review current code changes
 ```
 
 ## Testing & Quality Gates

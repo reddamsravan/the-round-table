@@ -8,8 +8,8 @@ description: >-
 # Task: Deterministic Task Graph & Subagent Orchestration Skill
 
 The agent SHALL structure workflows into directed acyclic task graphs, manage execution states, and verify acceptance criteria.
-The agent SHALL record active task states in `docs/.tasks/active.md`.
-The agent SHALL archive completed task graphs to `docs/.tasks/archive/`.
+The agent SHALL record active task states in `docs/.prompts-and-prayers/sprints/sprint-{N}/04-tasks/active.md` (or `docs/.tasks/active.md`).
+The agent SHALL archive completed task graphs to `docs/.prompts-and-prayers/sprints/sprint-{N}/06-release/` or `docs/.tasks/archive/`.
 
 ```mermaid
 flowchart TD

@@ -78,7 +78,8 @@ IF no findings exist across all concerns, THEN the verdict SHALL be `APPROVED`.
 
 ### Step 5: Produce the Review Report
 The agent SHALL invoke the `write` skill to produce the output.
-The agent SHALL write the report to: `docs/reviews/{YYYY-MM-DD}_{slug}.md`
+The agent SHALL write the report to: `docs/.prompts-and-prayers/sprints/sprint-{N}/05-reviews/{YYYY-MM-DD}_{slug}.md`
+The agent SHALL replace `{sprint-{N}}` with the active sprint directory name.
 The agent SHALL replace `{YYYY-MM-DD}` with the current ISO date.
 The agent SHALL replace `{slug}` with a concise kebab-case descriptor of the diff.
 

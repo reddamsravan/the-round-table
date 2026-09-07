@@ -729,6 +729,13 @@ def main():
         help="Target task markdown file to validate, or '-' for stdin (default: docs/.tasks/active.md)"
     )
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON diagnostics")
+    parser.add_argument(
+        "--sprint",
+        "-s",
+        type=str,
+        default=None,
+        help="Sprint identifier (e.g. sprint-1) to locate docs/.prompts-and-prayers/sprints/{sprint}/04-tasks/active.md",
+    )
     parser.add_argument("--check-schema", action="store_true", help="Run schema validation only")
     parser.add_argument("--check-dag", action="store_true", help="Run DAG dependency validation only")
     parser.add_argument("--check-ace", action="store_true", help="Run ACE acceptance criteria linting only")
@@ -752,11 +759,29 @@ def main():
     # Target resolution
     target = args.target
     if target is None:
-        default_active = os.path.join(os.getcwd(), "docs", ".tasks", "active.md")
-        if os.path.exists(default_active):
-            target = default_active
-        else:
-            target = "-"
+        if args.sprint:
+            sprint_active = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints", args.sprint, "04-tasks", "active.md")
+            if os.path.exists(sprint_active):
+                target = sprint_active
+        if target is None:
+            # Look for active sprint directory under docs/.prompts-and-prayers/sprints/
+            sprints_dir = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints")
+            if os.path.isdir(sprints_dir):
+                sprint_entries = sorted(
+                    [d for d in os.listdir(sprints_dir) if os.path.isdir(os.path.join(sprints_dir, d))],
+                    reverse=True
+                )
+                for sp in sprint_entries:
+                    candidate = os.path.join(sprints_dir, sp, "04-tasks", "active.md")
+                    if os.path.exists(candidate):
+                        target = candidate
+                        break
+        if target is None:
+            default_active = os.path.join(os.getcwd(), "docs", ".tasks", "active.md")
+            if os.path.exists(default_active):
+                target = default_active
+            else:
+                target = "-"
 
     # 1. Stdin mode
     if target == "-":
