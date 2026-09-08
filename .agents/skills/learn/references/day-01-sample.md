@@ -1,106 +1,121 @@
-# Day 1: Variables and Data Types
+# Day 1: Variables and Mental Models
 
-> **Curriculum**: Python Basics | **Level**: beginner | **Time budget**: 30 min | **Goal**: get a job as a Python developer
+> **Curriculum**: Python Basics | **Level**: beginner | **Daily Target**: 30 min | **Goal**: Build reliable software
 
 ## Learning Objectives
 
-- Define what a variable is and explain why programs use them.
-- Identify the four core Python data types: `int`, `float`, `str`, and `bool`.
-- Write and run a Python statement that assigns a value to a variable.
+- Explain how variables bind names to values in computer memory.
+- Distinguish four primary data types: integers, floats, strings, and booleans.
+- Predict program output before running code assignments.
 
-## Concept Explanation
+## Core Mental Model
 
-A variable is a named container that stores a value in your program's memory. Think of it like a labelled box: the label is the variable name, and whatever you put inside is the value.
+Think of a variable as a sticky note label. The label points to an object in memory.
+You attach the name to data. When you change the variable, you move the label to a new value.
 
-In Python, you create a variable by writing its name, an equals sign, and a value:
+## Predict and Inquire
 
-```python
-age = 25
-name = "Alice"
-price = 9.99
-is_active = True
-```
-
-Python figures out the data type automatically based on what you assign. This is called dynamic typing. You do not need to declare the type upfront.
-
-The four most common types are:
-
-- **int** — whole numbers, positive or negative (e.g., `42`, `-7`)
-- **float** — decimal numbers (e.g., `3.14`, `-0.5`)
-- **str** — text wrapped in quotes (e.g., `"hello"`, `'world'`)
-- **bool** — only two values: `True` or `False`
-
-You can check a variable's type using the built-in `type()` function:
+Read this sequence carefully before you check the answer:
 
 ```python
-print(type(age))     # <class 'int'>
-print(type(name))    # <class 'str'>
-print(type(price))   # <class 'float'>
-print(type(is_active))  # <class 'bool'>
+x = 10
+y = x
+x = 25
 ```
 
-## Real-World Examples
+**Your Question:** What value does `y` hold after these three lines execute?
 
-**Example 1**: A shopping cart stores the item count as an `int` (`items = 3`) and the total price as a `float` (`total = 47.50`). Using the correct types ensures arithmetic works correctly.
+<details>
+<summary>Check Your Prediction and Analysis</summary>
 
-**Example 2**: A login system stores a username as a `str` (`username = "alice123"`) and whether the user is logged in as a `bool` (`logged_in = False`). The bool drives conditional logic later.
+**Outcome:** `y` holds `10`, not `25`.
+**Why:** Python evaluates the right side first. Line 2 binds `y` directly to `10`. Changing `x` on line 3 never affects `y`.
 
-**Example 3**: A weather app stores temperature as a `float` (`temperature = 23.5`) so it can handle decimal readings from sensors and display accurate values.
+</details>
 
-## Comprehension Questions
+## Deep Dive and Applied Scenarios
+
+Python infers data types automatically during assignment. Developers call this dynamic typing.
+Four primary types appear in every program:
+
+- **int**: Whole numbers such as `42` or `-7`.
+- **float**: Decimal numbers such as `3.14` or `-0.5`.
+- **str**: Text characters enclosed in quotes.
+- **bool**: Binary flags with only two states: `True` or `False`.
+
+### Case Study 1: Shopping Cart
+A checkout system tracks item counts with integers. It stores total prices as floats. It tracks checkout status with a boolean flag.
+
+### Case Study 2: Weather Sensor
+A weather station records location names as strings. It samples temperature readings as floats. It flags hardware alerts as booleans.
+
+## Common Misconceptions and Traps
+
+### Pitfall 1: Equal Sign Means Algebraic Equality
+- **The Trap:** Beginners think `x = x + 1` is impossible math.
+- **The Reality:** The single equals sign means assignment. Python computes the right side first. It then saves the result into the label on the left.
+
+### Pitfall 2: Confusing Types in Arithmetic
+- **The Trap:** Adding `"5" + "5"` expects `10`.
+- **The Reality:** Python treats quoted numbers as strings. It joins them into `"55"`. Always convert strings with `int()` before math.
+
+## Comprehension Self-Check
 
 Answer each question in your own words before revealing the answer.
 
-**Question 1**: What does Python do automatically when you write `score = 100`?
+**Question 1:** What happens during variable assignment?
 
 <details>
-<summary>Show answer</summary>
+<summary>Show Answer</summary>
 
-Python creates a variable named `score`, assigns the integer value `100` to it, and stores it in memory. Python also infers the type as `int` without you specifying it.
+Python creates the value in memory. It then binds your variable name to that memory location.
 
 </details>
 
-**Question 2**: What is the difference between `42` and `42.0` in Python?
+**Question 2:** How do 42 and 42.0 differ?
 
 <details>
-<summary>Show answer</summary>
+<summary>Show Answer</summary>
 
-`42` is an `int` (a whole number with no decimal component). `42.0` is a `float` (a number with a decimal point). They look similar but behave differently in some operations, such as division and type checking.
+The integer `42` stores whole numbers. The float `42.0` stores fractional numbers with decimal precision.
 
 </details>
 
-**Question 3**: Why would you use `True` or `False` instead of `1` or `0`?
+**Question 3:** Why should you use booleans instead of numbers?
 
 <details>
-<summary>Show answer</summary>
+<summary>Show Answer</summary>
 
-Using `True` and `False` (the `bool` type) makes your code more readable and communicates intent clearly. Boolean variables also work directly with `if` statements and logical operators, which makes the code easier to understand and maintain.
+Booleans clarify intent. They express binary state directly and reduce confusion in conditional checks.
 
 </details>
 
 ## Practical Tasks
 
-### Core Task (15 to 30 min)
+### Tier 1: Analyze and Critique (5 to 10 min)
+Examine this broken snippet: `total = "40" + 2`. Explain why Python raises a TypeError and write the correct expression.
 
-Open a Python interpreter or create a file called `day_01.py`. Write five variable assignments using at least three different data types. Print each variable and its type using `print()` and `type()`.
+**Done when:**
+- [ ] You identified the string and integer mismatch.
+- [ ] You wrote the corrected expression using `int("40") + 2`.
+
+### Tier 2: Core Application (15 to 30 min)
+Write a script that defines four variables covering int, float, str, and bool. Print each variable with its type name.
 
 **Done when:**
 - [ ] The script runs without errors.
-- [ ] At least one variable uses `int`, one uses `str`, and one uses `float` or `bool`.
-- [ ] Each variable's name clearly describes what it stores.
+- [ ] The script assigns values for all four core data types.
+- [ ] Output displays clear labels for each variable and type.
 
-### Stretch Task (45 to 90 min)
-
-Build a small personal profile program. Ask the user to input their name, age, and a fun fact about themselves. Store each input in a correctly typed variable. Print a formatted summary sentence using all three variables.
+### Tier 3: Stretch Transfer (30 to 60 min)
+Reassign a single variable name through three different data types sequentially. Print the identity and type at each step.
 
 **Done when:**
-- [ ] The program uses `input()` to collect all three values.
-- [ ] The program converts age from `str` to `int` using `int()`.
-- [ ] The program prints a sentence like: `"Hi, I'm Alice, I'm 25 years old, and I love hiking."`
-- [ ] The script runs without errors on at least two different inputs.
+- [ ] You verified how Python rebinds names in memory.
+- [ ] You documented why dynamic typing requires testing vigilance.
 
-## Further Reading
+## Further Exploration
 
-- *Python Crash Course* by Eric Matthes — Chapter 2 covers variables and data types with clear beginner examples.
-- Documentation: "Python docs: Built-in Types" — the official reference for all Python types and their behaviour.
-- Search: "Python variables and data types tutorial for beginners"
+- **Authoritative Source**: Python Language Reference, Chapter 3 on Data Model.
+- **Search Query**: Python variable naming conventions PEP 8.
+- **Deep Thought Prompt**: Why does Python treat integers as immutable objects?

@@ -1,13 +1,19 @@
-## My Notes
+## Active Inquiries & Predictions
 
-Dynamic typing is interesting. Python figures out the type automatically, so I don't need to declare `int x = 5` like in Java. This feels more flexible but I wonder if it causes bugs when you expect one type and get another.
+Line 3 rebinds the name to a new value. The variable points to the new data, while the other variable retains the old value.
 
-The `type()` function is useful for debugging when I'm not sure what I'm working with.
+## Core Mental Model & Takeaway
+
+Variables are sticky note labels on boxes in memory. Changing a variable only moves the label.
+
+## Practical Task Output & Reflections
+
+I wrote a small script with four data types and verified each type name using `print()` and `type()`.
+
+## Traps & Misconceptions to Avoid
+
+Adding a string and a number causes a type error. Always convert strings using `int()` before doing math.
 
 ## Questions I Still Have
 
-What happens if I try to add a string and an integer together? For example, does `"age: " + 25` work or throw an error?
-
-## Key Insight
-
-Variable names should describe what they store, not how they are stored. Writing `user_age = 25` is better than `x = 25` because it makes the code self-documenting.
+Does dynamic typing cause performance slowdowns compared to static types in large loops?
