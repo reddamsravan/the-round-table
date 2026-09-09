@@ -1,9 +1,6 @@
 ---
 name: define
-description: >-
-  The agent SHALL capture problem statements, identify target personas, formulate functional requirements,
-  and enforce deterministic acceptance criteria.
-  WHEN the user invokes '/define' or requests requirements definition, THEN the agent SHALL activate this skill.
+description: Defines problem statements, functional requirements, and acceptance criteria.
 ---
 
 The agent SHALL formulate problem statements, target personas, functional requirements, and acceptance criteria in `docs/.prompts-and-prayers/{work_slug}/01-define/spec.md`.
