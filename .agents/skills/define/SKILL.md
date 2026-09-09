@@ -14,7 +14,6 @@ Every specification document MUST satisfy these rules:
    - `status`: One of `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `REJECTED`.
    - `approved_by`: `pending` or `human`.
    - `artifacts`: List of generated specification paths.
-   INVARIANT: the frontmatter SHALL NOT contain a persona field.
 2. **Mandatory Sections**:
    - `# Specification: <Title>`
    - `## 1. Objective & Value`

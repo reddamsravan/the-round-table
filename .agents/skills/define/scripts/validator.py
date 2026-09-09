@@ -195,14 +195,6 @@ class DefineValidator:
                 self.diagnostics.append(
                     Diagnostic(1, 1, "YAML_SYNTAX_ERROR", "ERROR", f"Invalid YAML frontmatter: {e}")
                 )
-                return {}
-
-        # Disallow persona key
-        if "persona" in data:
-            self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_FORBIDDEN_KEY", "ERROR", "Frontmatter SHALL NOT contain 'persona' key; define is a verb.")
-            )
-
         # Required keys
         required_keys = ["slug", "status", "approved_by", "artifacts"]
         for rk in required_keys:

@@ -72,7 +72,7 @@ So that my active work session continues uninterrupted.
         self.assertEqual(summary["slug"], "auth-token-refresh")
         self.assertEqual(summary["status"], "DRAFT")
 
-    def test_forbidden_persona_key(self):
+    def test_extra_key_ignored(self):
         content = """---
 slug: auth-token-refresh
 persona: define
@@ -105,8 +105,8 @@ So that value.
 Metric here.
 """
         _, diagnostics, _ = self.validator.validate_text(content)
-        rule_ids = [d.rule_id for d in diagnostics]
-        self.assertIn("SCHEMA_FORBIDDEN_KEY", rule_ids)
+        errors = [d for d in diagnostics if d.severity == "ERROR"]
+        self.assertEqual(len(errors), 0)
 
     def test_missing_frontmatter_keys(self):
         content = """---
