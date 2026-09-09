@@ -1,15 +1,13 @@
 ---
-sprint: {SPRINT_ID}
-persona: architect
+slug: {WORK_SLUG}
 status: DRAFT
 approved_by: pending
-handoff_to: developer
 artifacts:
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/03-architecture/tech-spec.md
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/04-tasks/plan.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/03-plot/tech-spec.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/03-plot/plan.md
 ---
 
-# Technical Architecture Specification: {FEATURE_TITLE}
+# Technical Specification: {FEATURE_TITLE}
 
 ## 1. System Overview & Architecture Topology
 
@@ -44,5 +42,5 @@ flowchart TD
 ## 4. Technical Constraints & Invariants
 
 - The system SHALL execute all operations deterministically.
-- All file modifications SHALL maintain backward compatibility unless a major version bump occurs.
+- All file modifications SHALL maintain backward compatibility.
 - The system SHALL validate all input parameters against defined schemas.

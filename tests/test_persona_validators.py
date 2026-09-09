@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test suite for Persona Validators (architect, developer, qa, scrum-master).
+Test suite for Persona Validators (developer, qa, scrum-master).
 """
 
 import unittest
@@ -21,86 +21,9 @@ def load_module(name: str, rel_path: str):
     return mod
 
 
-arch_mod = load_module("arch_validator", ".agents/skills/architect/scripts/validator.py")
 dev_mod = load_module("dev_validator", ".agents/skills/developer/scripts/validator.py")
 qa_mod = load_module("qa_validator", ".agents/skills/qa/scripts/validator.py")
 sm_mod = load_module("sm_validator", ".agents/skills/scrum-master/scripts/validator.py")
-
-
-class TestArchitectValidator(unittest.TestCase):
-    def setUp(self):
-        self.validator = arch_mod.ArchitectValidator()
-        self.test_dir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-
-    def test_valid_architect_sprint(self):
-        os.makedirs(os.path.join(self.test_dir, "01-stories"))
-        os.makedirs(os.path.join(self.test_dir, "03-architecture"))
-        os.makedirs(os.path.join(self.test_dir, "04-tasks"))
-
-        with open(os.path.join(self.test_dir, "01-stories", "spec.md"), "w") as f:
-            f.write("### Story: US-001 - Login Feature\n")
-
-        with open(os.path.join(self.test_dir, "03-architecture", "tech-spec.md"), "w") as f:
-            f.write("""---
-sprint: sprint-1
-persona: architect
-status: DRAFT
-approved_by: pending
-handoff_to: developer
-artifacts:
-  - 03-architecture/tech-spec.md
-  - 04-tasks/plan.md
----
-
-# Technical Architecture Specification: Auth Service
-
-## 1. System Overview & Architecture Topology
-```mermaid
-flowchart TD
-    Client --> API
-```
-
-## 2. Architectural Decision Records (ADRs)
-### ADR-001: JWT Auth
-
-## 3. Component Contracts & Interfaces
-- AuthController
-
-## 4. Technical Constraints & Invariants
-- The system SHALL validate all token signatures.
-""")
-
-        with open(os.path.join(self.test_dir, "04-tasks", "plan.md"), "w") as f:
-            f.write("""# Sprint Implementation Plan: Auth Service
-
-## Plan Overview
-Architecture tasks.
-
-## Traceability Matrix
-| PLAN-001 | US-001 | Auth |
-
-## Engineering Tasks
-
-### Task: PLAN-001 - Implement Controller
-```yaml
-id: PLAN-001
-title: Implement Controller
-status: TODO
-depends_on: []
-user_stories:
-  - US-001
-acceptance_criteria:
-  - The module SHALL return valid responses.
-```
-""")
-
-        diags, summary = self.validator.validate_sprint(self.test_dir)
-        errors = [d for d in diags if d.severity == "ERROR"]
-        self.assertEqual(len(errors), 0, f"Expected 0 errors, got: {[e.to_dict() for e in errors]}")
-        self.assertEqual(summary["total_plan_tasks"], 1)
 
 
 class TestDeveloperValidator(unittest.TestCase):

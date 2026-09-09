@@ -11,7 +11,6 @@ the-round-table/
 │   └── skills/
 │       ├── ace-write/     # ACE spec skill and checker
 │       ├── agile/         # Agile team orchestrator
-│       ├── architect/     # System design and plan checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
 │       ├── design/        # User flow and wireframe checker
@@ -19,6 +18,7 @@ the-round-table/
 │       ├── explain/       # Plain explanation skill and checker
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
+│       ├── plot/          # Technical spec and plan checker
 │       ├── qa/            # Test and code review checker
 │       ├── review/        # 8-concern code review skill
 │       ├── scrum-master/  # Sprint release and retro checker
@@ -40,7 +40,7 @@ The repo provides a full agile squad for building software.
 The team works through five steps:
 
 1. **Define**: The `define` and `design` skills draft requirements and screen flows.
-2. **Review**: The `architect` skill plans system design and engineering tasks.
+2. **Review**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `developer` skill writes code and runs unit tests.
 4. **Verify**: The `qa` skill checks test runs and reviews code changes.
 5. **Repeat**: The `scrum-master` skill logs releases and prepares git commits.
@@ -88,6 +88,9 @@ python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --
 
 # Check design spec rules
 python3 .agents/skills/design/scripts/validator.py docs/.../02-design/design-spec.md --json
+
+# Check plot spec rules
+python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
 
 # Check explanation rules
 python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json
