@@ -14,6 +14,7 @@ the-round-table/
 │       ├── architect/     # System design and plan checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
+│       ├── design/        # User flow and wireframe checker
 │       ├── developer/     # Task execution and test checker
 │       ├── explain/       # Plain explanation skill and checker
 │       ├── grill/         # Design interview skill
@@ -22,7 +23,6 @@ the-round-table/
 │       ├── review/        # 8-concern code review skill
 │       ├── scrum-master/  # Sprint release and retro checker
 │       ├── task/          # Task graph skill and checker
-│       ├── ux-designer/   # User flow and wireframe checker
 │       └── write/         # Clear text skill and checker
 ├── docs/
 │   └── .prompts-and-prayers/
@@ -39,7 +39,7 @@ the-round-table/
 The repo provides a full agile squad for building software.
 The team works through five steps:
 
-1. **Define**: The `define` and `ux-designer` skills draft requirements and screen flows.
+1. **Define**: The `define` and `design` skills draft requirements and screen flows.
 2. **Review**: The `architect` skill plans system design and engineering tasks.
 3. **Build**: The `developer` skill writes code and runs unit tests.
 4. **Verify**: The `qa` skill checks test runs and reviews code changes.
@@ -59,7 +59,7 @@ You can also run any skill on its own:
 
 ```text
 /define        # Ask the define skill for a requirements spec
-/ux-designer   # Ask the UX designer for a screen flow
+/design        # Ask the design skill for a screen flow
 /qa            # Ask QA to review current code changes
 ```
 
@@ -85,6 +85,9 @@ python3 .agents/skills/ace-write/scripts/validator.py docs/.../artifact.md --jso
 
 # Check requirement spec rules
 python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --json
+
+# Check design spec rules
+python3 .agents/skills/design/scripts/validator.py docs/.../02-design/design-spec.md --json
 
 # Check explanation rules
 python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json

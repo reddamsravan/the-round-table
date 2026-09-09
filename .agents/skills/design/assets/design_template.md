@@ -1,27 +1,22 @@
 ---
-sprint: {SPRINT_ID}
-persona: ux-designer
+slug: {WORK_SLUG}
 status: DRAFT
 approved_by: pending
-handoff_to: architect
 artifacts:
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/02-design/design-spec.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/02-design/design-spec.md
 ---
 
-# UX Design Specification: {FEATURE_TITLE}
+# Design Specification: {TITLE}
 
 ## 1. User Journey & Interaction Flow
 
 ### Overview
-{High-level description of user goals, emotional arc, and primary interaction steps.}
-
-### Traced Stories
-- Ref: {US-001}
+{High-level description of user goals, operational context, and primary interaction steps.}
 
 ### Interaction Flowchart
 ```mermaid
 flowchart TD
-    Start["User Lands on Screen"] --> Action["User Performs Action"]
+    Start["User Lands on View"] --> Action["User Performs Action"]
     Action --> Result["System Displays Updated State"]
 ```
 
@@ -31,8 +26,8 @@ flowchart TD
 stateDiagram-v2
     [*] --> Idle
     Idle --> Loading: User Triggers Event
-    Loading --> Success: Data Fetched Successfully
-    Loading --> Error: Fetch Fails
+    Loading --> Success: Operation Completes Successfully
+    Loading --> Error: Operation Fails
     Success --> [*]
     Error --> Idle: User Retries
 ```

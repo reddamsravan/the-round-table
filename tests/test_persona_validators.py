@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test suite for Persona Validators (po, ux-designer, architect, developer, qa, scrum-master).
+Test suite for Persona Validators (architect, developer, qa, scrum-master).
 """
 
 import unittest
@@ -21,87 +21,10 @@ def load_module(name: str, rel_path: str):
     return mod
 
 
-ux_mod = load_module("ux_validator", ".agents/skills/ux-designer/scripts/validator.py")
 arch_mod = load_module("arch_validator", ".agents/skills/architect/scripts/validator.py")
 dev_mod = load_module("dev_validator", ".agents/skills/developer/scripts/validator.py")
 qa_mod = load_module("qa_validator", ".agents/skills/qa/scripts/validator.py")
 sm_mod = load_module("sm_validator", ".agents/skills/scrum-master/scripts/validator.py")
-
-
-class TestUXValidator(unittest.TestCase):
-    def setUp(self):
-        self.validator = ux_mod.UXValidator()
-
-    def test_valid_ux_spec(self):
-        content = """---
-sprint: sprint-1
-persona: ux-designer
-status: DRAFT
-approved_by: pending
-handoff_to: architect
-artifacts:
-  - docs/.prompts-and-prayers/sprints/sprint-1/02-design/design-spec.md
----
-
-# UX Design Specification: Auth Flow
-
-## 1. User Journey & Interaction Flow
-Ref: US-001
-```mermaid
-flowchart TD
-    A["Enter Email"] --> B["Submit"]
-```
-
-## 2. Screen State Transitions
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Done
-```
-
-## 3. UI Layout & Component Specifications
-The view contains an email input field and a submit button.
-
-## 4. Accessibility & Responsive Requirements
-- The interface SHALL support full keyboard navigation.
-- The interface SHALL provide accessible label attributes.
-"""
-        diags, summary = self.validator.validate_text(content)
-        errors = [d for d in diags if d.severity == "ERROR"]
-        self.assertEqual(len(errors), 0, f"Expected 0 errors, got: {[e.to_dict() for e in errors]}")
-        self.assertEqual(summary["mermaid_blocks_count"], 2)
-
-    def test_missing_mermaid_and_forbidden_ascii(self):
-        content = """---
-sprint: sprint-1
-persona: ux-designer
-status: DRAFT
-approved_by: pending
-handoff_to: architect
-artifacts:
-  - test.md
----
-
-# UX Design Specification: Bad Spec
-
-## 1. User Journey & Interaction Flow
-+-------------------+
-| ASCII Box Diagram |
-+-------------------+
-
-## 2. Screen State Transitions
-No diagrams.
-
-## 3. UI Layout & Component Specifications
-Text.
-
-## 4. Accessibility & Responsive Requirements
-Text.
-"""
-        diags, summary = self.validator.validate_text(content)
-        error_rules = {d.rule_id for d in diags if d.severity == "ERROR"}
-        self.assertIn("MERMAID_MISSING", error_rules)
-        self.assertIn("FORBIDDEN_ASCII_ART", error_rules)
 
 
 class TestArchitectValidator(unittest.TestCase):

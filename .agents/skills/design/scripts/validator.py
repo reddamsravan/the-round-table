@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-UX Designer Specification Validator.
+Design Skill Specification Validator.
 
-Validates UX design specifications (e.g. docs/.prompts-and-prayers/sprints/sprint-1/02-design/design-spec.md) for:
-1. Frontmatter handover schema (sprint, persona: ux-designer, status, handoff_to: architect, artifacts).
-2. Mandatory section structure (User Journey, State Transitions, UI Layout, Accessibility).
+Validates design specifications (e.g. docs/.prompts-and-prayers/{work_slug}/02-design/design-spec.md) for:
+1. Frontmatter governance envelope (slug, status, approved_by, artifacts).
+2. Mandatory section structure:
+   - # Design Specification: <Title> (or # UX Design Specification: <Title>)
+   - ## 1. User Journey & Interaction Flow
+   - ## 2. Screen State Transitions
+   - ## 3. UI Layout & Component Specifications
+   - ## 4. Accessibility & Responsive Requirements
 3. Valid Mermaid code fences (flowcharts in Section 1, state diagrams in Section 2) and no ASCII art boxes.
-4. Story traceability against 01-stories/spec.md if present.
-5. Agentic ACE validation on accessibility requirements.
+4. Agentic ACE validation on accessibility requirements.
 """
 
 import sys
@@ -15,7 +19,7 @@ import os
 import re
 import json
 import argparse
-from typing import List, Dict, Any, Optional, Tuple, Set
+from typing import List, Dict, Any, Optional, Tuple
 
 try:
     import yaml
@@ -88,7 +92,7 @@ class Diagnostic:
         }
 
 
-class UXValidator:
+class DesignValidator:
     def __init__(self):
         self.diagnostics: List[Diagnostic] = []
 
@@ -98,14 +102,13 @@ class UXValidator:
         target_path: Optional[str] = None,
         check_schema: bool = True,
         check_diagrams: bool = True,
-        check_traceability: bool = True,
         check_ace: bool = True,
     ) -> Tuple[List[Diagnostic], Dict[str, Any]]:
         self.diagnostics = []
         lines = content.splitlines()
 
-        frontmatter, body_start_idx = self._parse_frontmatter(lines)
-        metadata = {}
+        frontmatter, _ = self._parse_frontmatter(lines)
+        metadata: Dict[str, Any] = {}
 
         if check_schema:
             metadata = self._validate_frontmatter(frontmatter)
@@ -117,16 +120,12 @@ class UXValidator:
             self._validate_diagrams(lines, mermaid_blocks)
             self._check_for_ascii_art(lines)
 
-        if check_traceability and target_path:
-            self._validate_story_traceability(content, target_path)
-
         if check_ace:
             self._validate_accessibility_ace(lines)
 
         summary = {
-            "sprint": metadata.get("sprint", "unknown"),
+            "slug": metadata.get("slug", "unknown"),
             "status": metadata.get("status", "unknown"),
-            "persona": metadata.get("persona", "unknown"),
             "mermaid_blocks_count": len(mermaid_blocks),
         }
 
@@ -159,7 +158,7 @@ class UXValidator:
             return {}
 
         if yaml is None:
-            meta = {}
+            meta: Dict[str, Any] = {}
             for line in yaml_text.splitlines():
                 if ":" in line:
                     k, v = line.split(":", 1)
@@ -174,51 +173,65 @@ class UXValidator:
                 )
                 return {}
 
-        required_keys = ["sprint", "persona", "status", "handoff_to", "artifacts"]
+        required_keys = ["slug", "status", "approved_by", "artifacts"]
         for rk in required_keys:
             if rk not in data:
                 self.diagnostics.append(
                     Diagnostic(1, 1, "SCHEMA_MISSING_KEY", "ERROR", f"Frontmatter missing mandatory key '{rk}'.")
                 )
 
-        if data.get("persona") != "ux-designer":
-            self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_INVALID_PERSONA", "ERROR", f"Frontmatter 'persona' must be 'ux-designer', found '{data.get('persona')}'.")
-            )
-
         status = data.get("status")
-        if status not in VALID_STATUSES:
+        if status and status not in VALID_STATUSES:
             self.diagnostics.append(
                 Diagnostic(1, 1, "SCHEMA_INVALID_STATUS", "ERROR", f"Frontmatter 'status' must be one of {sorted(VALID_STATUSES)}, found '{status}'.")
             )
 
-        if data.get("handoff_to") != "architect":
+        approved_by = data.get("approved_by")
+        if approved_by and approved_by not in {"pending", "human"}:
             self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_INVALID_HANDOFF", "ERROR", f"Frontmatter 'handoff_to' must be 'architect', found '{data.get('handoff_to')}'.")
+                Diagnostic(1, 1, "SCHEMA_INVALID_APPROVED_BY", "ERROR", f"Frontmatter 'approved_by' must be 'pending' or 'human', found '{approved_by}'.")
             )
 
         artifacts = data.get("artifacts")
-        if not isinstance(artifacts, list) or len(artifacts) == 0:
-            self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_INVALID_ARTIFACTS", "ERROR", "Frontmatter 'artifacts' must be a non-empty list.")
-            )
+        if "artifacts" in data:
+            if not isinstance(artifacts, list) or len(artifacts) == 0:
+                self.diagnostics.append(
+                    Diagnostic(1, 1, "SCHEMA_INVALID_ARTIFACTS", "ERROR", "Frontmatter 'artifacts' must be a non-empty list.")
+                )
 
         return data
 
     def _validate_required_sections(self, lines: List[str]):
-        headings = [line.strip() for line in lines if line.startswith("#")]
         required_patterns = [
-            (r"^#\s+UX Design Specification:", "Title '# UX Design Specification: <Title>'"),
+            (r"^#\s+(?:UX\s+)?Design Specification:", "Title '# Design Specification: <Title>'"),
             (r"^##\s+1\.\s+User Journey & Interaction Flow", "Section '## 1. User Journey & Interaction Flow'"),
             (r"^##\s+2\.\s+Screen State Transitions", "Section '## 2. Screen State Transitions'"),
             (r"^##\s+3\.\s+UI Layout & Component Specifications", "Section '## 3. UI Layout & Component Specifications'"),
             (r"^##\s+4\.\s+Accessibility & Responsive Requirements", "Section '## 4. Accessibility & Responsive Requirements'"),
         ]
 
+        found_indices = []
         for pattern, label in required_patterns:
-            if not any(re.search(pattern, h) for h in headings):
+            matched_line = None
+            for idx, line in enumerate(lines, start=1):
+                if re.search(pattern, line.strip()):
+                    matched_line = idx
+                    break
+            if matched_line is None:
                 self.diagnostics.append(
                     Diagnostic(1, 1, "STRUCTURE_MISSING_SECTION", "ERROR", f"Document missing mandatory section: {label}.")
+                )
+            else:
+                found_indices.append((matched_line, label))
+
+        if len(found_indices) == len(required_patterns):
+            line_numbers = [idx for idx, _ in found_indices]
+            if line_numbers != sorted(line_numbers):
+                self.diagnostics.append(
+                    Diagnostic(
+                        1, 1, "SECTION_ORDER_INVALID", "ERROR",
+                        "Sections appear out of required sequential order."
+                    )
                 )
 
     def _extract_mermaid_blocks(self, lines: List[str]) -> List[Tuple[int, str]]:
@@ -272,7 +285,6 @@ class UXValidator:
             )
 
     def _check_for_ascii_art(self, lines: List[str]):
-        # Flag ASCII box drawing characters or deliberate ASCII border lines outside markdown tables
         ascii_box_re = re.compile(r"(\+[-=]{3,}\+|\|[-=]{3,}\||\+---+|┌─+┐|└─+┘|├───┤)")
         in_code = False
         for idx, line in enumerate(lines, start=1):
@@ -282,7 +294,6 @@ class UXValidator:
             if in_code:
                 continue
 
-            # Markdown tables have | at borders, but not +---+ or +===+
             if line.strip().startswith("+--") or line.strip().startswith("+==") or ascii_box_re.search(line):
                 self.diagnostics.append(
                     Diagnostic(
@@ -291,28 +302,6 @@ class UXValidator:
                         line
                     )
                 )
-
-    def _validate_story_traceability(self, content: str, target_path: str):
-        # Locate corresponding 01-stories/spec.md
-        dir_name = os.path.dirname(target_path)
-        sprint_dir = os.path.dirname(dir_name)
-        stories_spec = os.path.join(sprint_dir, "01-stories", "spec.md")
-
-        if os.path.exists(stories_spec):
-            try:
-                with open(stories_spec, "r", encoding="utf-8") as f:
-                    s_content = f.read()
-                story_ids = set(re.findall(r"###\s+Story:\s+(US-\d+)", s_content))
-                for sid in story_ids:
-                    if sid not in content:
-                        self.diagnostics.append(
-                            Diagnostic(
-                                1, 1, "UNTRACED_USER_STORY", "ERROR",
-                                f"Design spec must reference User Story '{sid}' from 01-stories/spec.md."
-                            )
-                        )
-            except Exception:
-                pass
 
     def _validate_accessibility_ace(self, lines: List[str]):
         in_a11y = False
@@ -364,9 +353,9 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
     warnings = [d for d in diagnostics if d.severity == "WARNING"]
     lines = []
     lines.append("=" * 70)
-    lines.append(f"UX DESIGN SPEC VALIDATOR: {target}")
+    lines.append(f"DESIGN SPEC VALIDATOR: {target}")
     lines.append("=" * 70)
-    lines.append(f"Sprint:         {summary.get('sprint', 'unknown')}")
+    lines.append(f"Slug:           {summary.get('slug', 'unknown')}")
     lines.append(f"Status:         {summary.get('status', 'unknown')}")
     lines.append(f"Mermaid Blocks: {summary.get('mermaid_blocks_count', 0)}")
     lines.append("-" * 70)
@@ -378,7 +367,7 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
             if e.snippet:
                 lines.append(f"    Snippet: {e.snippet}")
     else:
-        lines.append("No errors found. UX specification is clean!")
+        lines.append("No errors found. Design specification is clean!")
 
     if warnings:
         lines.append(f"WARNINGS ({len(warnings)}):")
@@ -392,12 +381,11 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
 
 
 def main():
-    parser = argparse.ArgumentParser(description="UX Designer Specification Validator")
+    parser = argparse.ArgumentParser(description="Design Skill Specification Validator")
     parser.add_argument("target", nargs="?", default=None, help="Target markdown design spec to validate")
-    parser.add_argument("--sprint", "-s", type=str, default=None, help="Sprint identifier (e.g. sprint-1)")
+    parser.add_argument("--slug", "-s", type=str, default=None, help="Work slug identifier")
     parser.add_argument("--check-schema", action="store_true", help="Run schema & section checks only")
     parser.add_argument("--check-diagrams", action="store_true", help="Run Mermaid diagram checks only")
-    parser.add_argument("--check-traceability", action="store_true", help="Run story traceability checks only")
     parser.add_argument("--check-ace", action="store_true", help="Run ACE accessibility checks only")
     parser.add_argument("--all", action="store_true", help="Run all checks (default)")
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON results")
@@ -406,43 +394,37 @@ def main():
 
     run_schema = True
     run_diagrams = True
-    run_trace = True
     run_ace = True
 
-    if args.check_schema or args.check_diagrams or args.check_traceability or args.check_ace:
+    if args.check_schema or args.check_diagrams or args.check_ace:
         run_schema = args.check_schema
         run_diagrams = args.check_diagrams
-        run_trace = args.check_traceability
         run_ace = args.check_ace
 
     target = args.target
     if target is None:
-        if args.sprint:
-            candidate = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints", args.sprint, "02-design", "design-spec.md")
+        if args.slug:
+            candidate = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", args.slug, "02-design", "design-spec.md")
             if os.path.exists(candidate):
                 target = candidate
         if target is None:
-            sprints_dir = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints")
-            if os.path.isdir(sprints_dir):
-                sprint_entries = sorted(
-                    [d for d in os.listdir(sprints_dir) if os.path.isdir(os.path.join(sprints_dir, d))],
-                    reverse=True
-                )
-                for sp in sprint_entries:
-                    candidate = os.path.join(sprints_dir, sp, "02-design", "design-spec.md")
+            base_dir = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers")
+            if os.path.isdir(base_dir):
+                for entry in sorted(os.listdir(base_dir), reverse=True):
+                    candidate = os.path.join(base_dir, entry, "02-design", "design-spec.md")
                     if os.path.exists(candidate):
                         target = candidate
                         break
         if target is None:
             target = "-"
 
-    validator = UXValidator()
+    validator = DesignValidator()
 
     if target == "-":
         content = sys.stdin.read()
         diags, summary = validator.validate_text(
             content, target_path=None, check_schema=run_schema, check_diagrams=run_diagrams,
-            check_traceability=run_trace, check_ace=run_ace
+            check_ace=run_ace
         )
         error_count = len([d for d in diags if d.severity == "ERROR"])
         warn_count = len([d for d in diags if d.severity == "WARNING"])
@@ -470,7 +452,7 @@ def main():
 
     diags, summary = validator.validate_text(
         content, target_path=target_path, check_schema=run_schema, check_diagrams=run_diagrams,
-        check_traceability=run_trace, check_ace=run_ace
+        check_ace=run_ace
     )
     error_count = len([d for d in diags if d.severity == "ERROR"])
     warn_count = len([d for d in diags if d.severity == "WARNING"])
