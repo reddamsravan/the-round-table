@@ -13,11 +13,11 @@ the-round-table/
 │       ├── agile/         # Agile team orchestrator
 │       ├── architect/     # System design and plan checker
 │       ├── commit/        # Commit note skill and checker
+│       ├── define/        # Requirements specification checker
 │       ├── developer/     # Task execution and test checker
 │       ├── explain/       # Plain explanation skill and checker
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
-│       ├── po/            # Product owner story checker
 │       ├── qa/            # Test and code review checker
 │       ├── review/        # 8-concern code review skill
 │       ├── scrum-master/  # Sprint release and retro checker
@@ -39,7 +39,7 @@ the-round-table/
 The repo provides a full agile squad for building software.
 The team works through five steps:
 
-1. **Define**: The `po` and `ux-designer` skills draft user stories and screen flows.
+1. **Define**: The `define` and `ux-designer` skills draft requirements and screen flows.
 2. **Review**: The `architect` skill plans system design and engineering tasks.
 3. **Build**: The `developer` skill writes code and runs unit tests.
 4. **Verify**: The `qa` skill checks test runs and reviews code changes.
@@ -58,7 +58,7 @@ Start a full sprint with one command:
 You can also run any skill on its own:
 
 ```text
-/po            # Ask the PO to refine a user story
+/define        # Ask the define skill for a requirements spec
 /ux-designer   # Ask the UX designer for a screen flow
 /qa            # Ask QA to review current code changes
 ```
@@ -82,6 +82,9 @@ python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
 
 # Check ACE spec rules
 python3 .agents/skills/ace-write/scripts/validator.py docs/.../artifact.md --json
+
+# Check requirement spec rules
+python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --json
 
 # Check explanation rules
 python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json

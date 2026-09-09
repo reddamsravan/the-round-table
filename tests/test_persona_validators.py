@@ -21,84 +21,11 @@ def load_module(name: str, rel_path: str):
     return mod
 
 
-po_mod = load_module("po_validator", ".agents/skills/po/scripts/validator.py")
 ux_mod = load_module("ux_validator", ".agents/skills/ux-designer/scripts/validator.py")
 arch_mod = load_module("arch_validator", ".agents/skills/architect/scripts/validator.py")
 dev_mod = load_module("dev_validator", ".agents/skills/developer/scripts/validator.py")
 qa_mod = load_module("qa_validator", ".agents/skills/qa/scripts/validator.py")
 sm_mod = load_module("sm_validator", ".agents/skills/scrum-master/scripts/validator.py")
-
-
-class TestPOValidator(unittest.TestCase):
-    def setUp(self):
-        self.validator = po_mod.POValidator()
-
-    def test_valid_po_story_spec(self):
-        content = """---
-sprint: sprint-1
-persona: po
-status: DRAFT
-approved_by: pending
-handoff_to: ux-designer
-artifacts:
-  - docs/.prompts-and-prayers/sprints/sprint-1/01-stories/spec.md
----
-
-# Sprint Specification: Core Auth
-
-## 1. Sprint Goal
-Deliver user authentication.
-
-## 2. Target Personas
-- **Primary Persona**: End User
-
-## 3. Scope Boundaries
-### In-Scope
-- Email login
-### Out-of-Scope
-- Social login
-
-## 4. User Stories
-
-### Story: US-001 - User Login
-
-**Narrative**:
-As an end user,
-I want to log in with email and password,
-So that I access my account securely.
-
-**Acceptance Criteria**:
-- The system SHALL validate user credentials.
-- The system MUST return an auth token upon successful login.
-"""
-        stories, diags, summary = self.validator.validate_text(content)
-        errors = [d for d in diags if d.severity == "ERROR"]
-        self.assertEqual(len(errors), 0, f"Expected 0 errors, got: {[e.to_dict() for e in errors]}")
-        self.assertEqual(len(stories), 1)
-        self.assertEqual(summary["sprint"], "sprint-1")
-
-    def test_invalid_po_frontmatter_and_ace(self):
-        content = """---
-sprint: sprint-1
-persona: developer
-status: UNKNOWN
-handoff_to: qa
-artifacts: []
----
-
-# Sprint Specification: Incomplete Spec
-
-## 4. User Stories
-
-### Story: US-001 - Broken Story
-The user can login.
-"""
-        stories, diags, summary = self.validator.validate_text(content)
-        error_rules = {d.rule_id for d in diags if d.severity == "ERROR"}
-        self.assertIn("SCHEMA_INVALID_PERSONA", error_rules)
-        self.assertIn("SCHEMA_INVALID_STATUS", error_rules)
-        self.assertIn("SCHEMA_INVALID_HANDOFF", error_rules)
-        self.assertIn("INVEST_FORMULA_VIOLATION", error_rules)
 
 
 class TestUXValidator(unittest.TestCase):
