@@ -14,6 +14,7 @@ the-round-table/
 │       ├── architect/     # System design and plan checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── developer/     # Task execution and test checker
+│       ├── explain/       # Plain explanation skill and checker
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── po/            # Product owner story checker
@@ -81,6 +82,9 @@ python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
 
 # Check ACE spec rules
 python3 .agents/skills/ace-write/scripts/validator.py docs/.../artifact.md --json
+
+# Check explanation rules
+python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json
 
 # Check commit note rules
 python3 .agents/skills/commit/scripts/validator.py --check < commit_message.txt
