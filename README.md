@@ -9,6 +9,7 @@ It gives agents simple workflows, exact specs, clear writing, and fast test chec
 the-round-table/
 ├── .agents/
 │   └── skills/
+│       ├── breakdown/     # Task graph decomposition skill
 │       ├── build/         # Task execution and test checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
@@ -20,7 +21,6 @@ the-round-table/
 │       ├── prose/         # STE and ACE prose checker
 │       ├── review/        # 8-concern code review skill
 │       ├── ship/          # Release notes and commit coordinator
-│       ├── task/          # Task graph skill and checker
 │       ├── verify/        # Test and code review checker
 │       └── write-a-skill/ # Skill authoring and schema checker
 ├── docs/
@@ -75,9 +75,6 @@ python3 .agents/skills/prose/scripts/validator.py README.md --json
 
 # Check ACE contract rules
 python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
-
-# Check task graph rules
-python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
 
 # Check requirement spec rules
 python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --json
