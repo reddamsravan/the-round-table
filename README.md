@@ -21,7 +21,8 @@ the-round-table/
 │       ├── review/        # 8-concern code review skill
 │       ├── ship/          # Release notes and commit coordinator
 │       ├── task/          # Task graph skill and checker
-│       └── verify/        # Test and code review checker
+│       ├── verify/        # Test and code review checker
+│       └── write-a-skill/ # Skill authoring and schema checker
 ├── docs/
 │   └── .prompts-and-prayers/
 │       ├── backlog/       # Feature backlog ledger
@@ -98,14 +99,18 @@ python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md
 
 # Check commit note rules
 python3 .agents/skills/commit/scripts/validator.py --check < commit_message.txt
+
+# Check skill frontmatter rules
+python3 .agents/skills/write-a-skill/scripts/validator.py .agents/skills/.../ --json
 ```
 
 ## Adding New Skills
 
-Follow these steps to add a new skill to the project:
+Run `/write-a-skill` to create a new skill following the [Agent Skills standard](.agents/skills/write-a-skill/references/specification.md).
+Follow these manual steps to add a skill:
 
 1. **Make a Skill Folder**: Add a folder under `.agents/skills/<skill-name>/`.
-2. **Write the Contract**: Add `SKILL.md` using `prose` (ACE mode) rules with active voice and clear constraints.
-3. **Add a Check Script**: Put your Python script in `.agents/skills/<skill-name>/scripts/validator.py`.
-4. **Write Unit Tests**: Add test cases to `tests/test_<skill_name>_validator.py`.
+2. **Write the Contract**: Add `SKILL.md` and check prose with `prose` using `--mode ace`.
+3. **Add a Check Script**: If you need exact math or transforms, add a script in `.agents/skills/<skill-name>/scripts/validator.py`.
+4. **Write Unit Tests**: If you added a script, add test cases to `tests/test_<skill_name>_validator.py`.
 5. **Run the Test Suite**: Run `python3 -m unittest discover tests` and make sure all tests pass.
