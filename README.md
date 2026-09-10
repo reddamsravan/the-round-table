@@ -10,7 +10,6 @@ the-round-table/
 ├── .agents/
 │   └── skills/
 │       ├── ace-write/     # ACE spec skill and checker
-│       ├── agile/         # Agile team orchestrator
 │       ├── build/         # Task execution and test checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
@@ -34,33 +33,30 @@ the-round-table/
 └── README.md
 ```
 
-## Agile Team Workflow
+## Team Workflow
 
-The repo provides a full agile squad for building software.
-The team works through five steps:
+The repo provides skills for building software.
+The skills cover each step:
 
 1. **Define**: The `define` and `design` skills draft requirements and screen flows.
-2. **Review**: The `plot` skill plans system design and engineering tasks.
+2. **Plan**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `build` skill writes code and runs unit tests.
 4. **Verify**: The `verify` skill checks test runs and reviews code changes.
-5. **Repeat**: The `ship` skill logs releases and prepares git commits.
+5. **Ship**: The `ship` skill logs releases and prepares git commits.
 
 The human acts as the leader. The agent stops for your approval at each key step.
 
 ### Example Run
 
-Start a full sprint with one command:
-
-```text
-/agile
-```
-
-You can also run any skill on its own:
+Run any skill on its own:
 
 ```text
 /define        # Ask the define skill for a requirements spec
 /design        # Ask the design skill for a screen flow
-/verify        # Ask verify to review current code changes
+/plot          # Ask the plot skill for a system plan
+/build         # Ask the build skill to write code and tests
+/verify        # Ask the verify skill to check tests and diffs
+/ship          # Ask the ship skill to draft release notes
 ```
 
 ## Testing & Quality Gates
