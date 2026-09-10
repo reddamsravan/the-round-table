@@ -1,8 +1,8 @@
-# Sprint Retrospective: {SPRINT_TITLE}
+# Retrospective: {WORK_TITLE}
 
-## 1. Sprint Execution Metrics
+## 1. Execution Metrics
 
-- **Completed User Stories**: {N}
+- **Completed Stories / Features**: {N}
 - **Completed Atomic Tasks**: {N}
 - **Total Test Suites Executed**: {N}
 - **Blockers Resolved**: {N}
@@ -10,13 +10,13 @@
 
 ## 2. What Went Well
 
-- {Effective collaboration patterns, clean specs, or fast test feedback observed during sprint}
+- {Effective collaboration patterns, clean specs, or fast test feedback observed during execution}
 
 ## 3. Opportunities for Improvement
 
 - {Friction points, unexpected debugging cycles, or ambiguous requirements encountered}
 
-## 4. Action Items for Next Sprint
+## 4. Action Items for Next Iteration
 
 - The team SHALL maintain {specific improvement action}.
 - The team SHALL enforce {specific process refinement}.

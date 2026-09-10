@@ -1,23 +1,21 @@
 ---
-sprint: {SPRINT_ID}
-persona: scrum-master
+slug: {WORK_SLUG}
 status: DRAFT
 approved_by: pending
-handoff_to: po
 artifacts:
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/06-release/release-notes.md
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/06-release/retrospective.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/06-ship/release-notes.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/06-ship/retrospective.md
 ---
 
-# Sprint Release Notes: {SPRINT_TITLE}
+# Release Notes: {WORK_TITLE}
 
 ## 1. Release Summary
 
-{High-level business summary of sprint outcomes and capabilities delivered.}
+{High-level summary of delivered outcomes and capabilities.}
 
 ## 2. Delivered Features & User Stories
 
-| Story ID | Title | Business Value Delivered |
+| Item ID | Title | Value Delivered |
 |---|---|---|
 | US-001 | {Story Title} | {Value summary} |
 | US-002 | {Story Title} | {Value summary} |
@@ -29,6 +27,6 @@ artifacts:
 
 ## 4. Verification Signoff
 
-- **QA Review Verdict**: APPROVED (0 Blockers)
+- **Verification Verdict**: APPROVED (0 Blockers)
 - **Test Suite Status**: 100% Passing
 - **Stakeholder Gate 4 Signoff**: Confirmed

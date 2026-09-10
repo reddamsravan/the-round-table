@@ -20,7 +20,7 @@ the-round-table/
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical spec and plan checker
 │       ├── review/        # 8-concern code review skill
-│       ├── scrum-master/  # Sprint release and retro checker
+│       ├── ship/          # Release notes and commit coordinator
 │       ├── task/          # Task graph skill and checker
 │       ├── verify/        # Test and code review checker
 │       └── write/         # Clear text skill and checker
@@ -43,7 +43,7 @@ The team works through five steps:
 2. **Review**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `build` skill writes code and runs unit tests.
 4. **Verify**: The `verify` skill checks test runs and reviews code changes.
-5. **Repeat**: The `scrum-master` skill logs releases and prepares git commits.
+5. **Repeat**: The `ship` skill logs releases and prepares git commits.
 
 The human acts as the leader. The agent stops for your approval at each key step.
 
