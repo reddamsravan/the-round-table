@@ -14,7 +14,7 @@ the-round-table/
 │       ├── define/        # Requirements specification checker
 │       ├── design/        # User flow and wireframe checker
 │       ├── explain/       # Plain explanation skill and checker
-│       ├── grill/         # Design interview skill
+│       ├── interview/     # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical spec and plan checker
 │       ├── prose/         # STE and ACE prose checker
@@ -26,7 +26,7 @@ the-round-table/
 ├── docs/
 │   └── .prompts-and-prayers/
 │       ├── backlog/       # Feature backlog ledger
-│       ├── grilling/      # Saved design logs
+│       ├── interviews/    # Saved design logs
 │       └── sprints/       # Sprint workspaces and artifacts
 ├── tests/                 # Unit tests for checkers
 ├── .gitignore

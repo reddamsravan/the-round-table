@@ -52,16 +52,10 @@ The agent SHALL write laconic technical text.
 | **Voice** | Active SVO only. Every clause names an explicit actor and action. |
 
 ## Verification Checklist
-- [ ] Validate frontmatter schema:
+- [ ] Preserve frontmatter, markdown tables, and code blocks verbatim.
+- [ ] Verify that all rewritten prose is laconic and active voice.
+- [ ] Run validator and confirm zero errors:
   ```bash
-  python3 .agents/skills/write-a-skill/scripts/validator.py .agents/skills/prose/ --json
+  python3 .agents/skills/prose/scripts/validator.py <path> [--mode ace] --json
   ```
-- [ ] Validate skill prose:
-  ```bash
-  python3 .agents/skills/prose/scripts/validator.py .agents/skills/prose/SKILL.md --mode ace --json
-  ```
-- [ ] Run unit tests:
-  ```bash
-  python3 -m unittest discover tests -k test_prose_validator
-  ```
-- [ ] Verify skill registration in `README.md` under Project Structure.
+- [ ] Overwrite target file in place.

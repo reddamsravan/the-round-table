@@ -19,4 +19,4 @@ The agent SHALL {{achieve stated outcome}}.
 {{Conditional or repeated procedures referenced by workflow}}
 
 ## Verification Checklist
-{{Checks: outputs exist, tests pass, user confirms}}
+{{Execution checks unique to this skill: prerequisites satisfied, outputs exist, verifications pass, user confirms}}

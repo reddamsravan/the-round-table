@@ -12,6 +12,12 @@ The agent SHALL guide the user to author reliable agent skills adhering to [refe
 - The agent SHALL recommend `scripts/` only when the skill requires exact computation, static AST parsing, or binary transforms.
 - The agent SHALL NOT add `scripts/` for procedural workflows, document authoring, or review skills.
 - IF a workflow has conditional paths or repeated steps, THEN the agent SHALL author separate procedures referenced by the workflow.
+- The agent SHALL NOT duplicate statements across Rules, Workflow, and Procedures.
+- Rules MUST define behavioral invariants and constraints only.
+- Workflow MUST define sequential execution steps only.
+- Procedures MUST define execution details for conditional or repeated steps only.
+- The agent SHALL author a Verification Checklist unique to the execution outputs of the target skill.
+- The agent SHALL NOT copy the skill authoring checklist into the target skill.
 
 ## Workflow
 1. Execute Procedure A to interview the user and discover requirements.
@@ -25,7 +31,7 @@ The agent SHALL guide the user to author reliable agent skills adhering to [refe
 ## Procedures
 
 ### Procedure A: Discovery and Requirements
-1. The agent SHALL activate the `grill` skill to map the design tree for the target skill.
+1. The agent SHALL activate the `interview` skill to map the design tree for the target skill.
 2. The interview SHALL extract the skill name, slash command trigger, user intent keywords, inputs, outputs, and behavioral invariants.
 3. The agent SHALL verify that the skill name consists of lowercase alphanumeric characters and single hyphens without edge hyphens.
 

@@ -34,7 +34,7 @@ Every plot artifact set MUST satisfy these rules:
 GIVEN approved definitions and designs.
 WHEN the agent activates the plot skill:
 1. Intake: the agent SHALL inspect definitions and designs in `01-define/` and `02-design/`.
-2. Trade-offs: IF open trade-offs exist, THEN the agent SHALL activate the `grill` skill.
+2. Trade-offs: IF open trade-offs exist, THEN the agent SHALL activate the `interview` skill.
 3. Generate: the agent SHALL fill `.agents/skills/plot/assets/tech_spec_template.md` and `.agents/skills/plot/assets/plan_template.md` under `docs/.prompts-and-prayers/{work_slug}/03-plot/`.
 4. Validate: the agent SHALL run:
    ```bash
