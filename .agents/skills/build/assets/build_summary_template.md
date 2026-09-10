@@ -1,14 +1,12 @@
 ---
-sprint: {SPRINT_ID}
-persona: developer
+slug: {WORK_SLUG}
 status: DRAFT
 approved_by: pending
-handoff_to: qa
 artifacts:
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/04-tasks/dev-summary.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/04-build/build-summary.md
 ---
 
-# Sprint Implementation Summary: {SPRINT_TITLE}
+# Build Summary: {WORK_TITLE}
 
 ## 1. Execution Overview
 
@@ -18,8 +16,8 @@ artifacts:
 
 | Task ID | Parent Plan ID | Title | Test Suite | Archive Path |
 |---|---|---|---|---|
-| TASK-001 | PLAN-001 | {Task Title} | tests/{test_file.py} | 04-tasks/archive/TASK-001.md |
-| TASK-002 | PLAN-002 | {Task Title} | tests/{test_file.py} | 04-tasks/archive/TASK-002.md |
+| TASK-001 | PLAN-001 | {Task Title} | tests/{test_file.py} | 04-build/archive/TASK-001.md |
+| TASK-002 | PLAN-002 | {Task Title} | tests/{test_file.py} | 04-build/archive/TASK-002.md |
 
 ## 3. Test Verification Evidence
 

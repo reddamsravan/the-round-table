@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Developer Task and Summary Validator.
+Build Skill Task and Summary Validator.
 
 Validates:
-1. docs/.prompts-and-prayers/sprints/sprint-{N}/04-tasks/active.md for single in-flight atomic task rules (effort <= 4h, verify_cmd, ACE criteria).
-2. docs/.prompts-and-prayers/sprints/sprint-{N}/04-tasks/dev-summary.md for frontmatter, section structure, and archive references.
+1. docs/.prompts-and-prayers/{work_slug}/04-build/active.md (or docs/.tasks/active.md)
+   for single in-flight atomic task rules (effort <= 4.0h, verify_cmd, ACE criteria).
+2. docs/.prompts-and-prayers/{work_slug}/04-build/build-summary.md
+   for frontmatter envelope (slug, status, approved_by, artifacts) and mandatory sections.
 """
 
 import sys
@@ -88,15 +90,14 @@ class Diagnostic:
         }
 
 
-class DeveloperValidator:
+class BuildValidator:
     def __init__(self):
         self.diagnostics: List[Diagnostic] = []
 
-    def validate_active_task(self, content: str, path: str) -> Tuple[List[Diagnostic], Dict[str, Any]]:
+    def validate_active_task(self, content: str, path: str = "active.md") -> Tuple[List[Diagnostic], Dict[str, Any]]:
         self.diagnostics = []
         lines = content.splitlines()
 
-        # Check for task headings
         task_headings = [l.strip() for l in lines if re.match(r"^###\s+Task:\s+TASK-\d+", l.strip())]
         if len(task_headings) > 1:
             self.diagnostics.append(
@@ -140,6 +141,7 @@ class DeveloperValidator:
             if in_yaml:
                 yaml_lines.append(line)
 
+        effort_val = None
         if task_data:
             req_keys = ["id", "parent_plan_id", "title", "status", "effort_hours", "verify_cmd", "acceptance_criteria"]
             for rk in req_keys:
@@ -161,7 +163,7 @@ class DeveloperValidator:
                     )
             except (ValueError, TypeError):
                 self.diagnostics.append(
-                    Diagnostic(start_line, 1, "INVALID_EFFORT_FORMAT", "ERROR", f"Task effort_hours must be a numeric value.", file_name=path)
+                    Diagnostic(start_line, 1, "INVALID_EFFORT_FORMAT", "ERROR", "Task effort_hours must be a numeric value.", file_name=path)
                 )
 
             status = task_data.get("status")
@@ -170,22 +172,27 @@ class DeveloperValidator:
                     Diagnostic(start_line, 1, "INVALID_TASK_STATUS", "ERROR", f"Status must be in {sorted(VALID_TASK_STATUSES)}, found '{status}'.", file_name=path)
                 )
 
-            # Check criteria
-            for c in task_data.get("acceptance_criteria", []):
-                self._check_ace_line(c, start_line, path)
+            criteria = task_data.get("acceptance_criteria", [])
+            if not isinstance(criteria, list) or len(criteria) == 0:
+                self.diagnostics.append(
+                    Diagnostic(start_line, 1, "TASK_MISSING_CRITERIA", "ERROR", "Atomic task must have non-empty acceptance_criteria list.", file_name=path)
+                )
+            else:
+                for c in criteria:
+                    self._check_ace_line(c, start_line, path)
 
         summary = {
             "active_task_id": task_data.get("id") if task_data else None,
             "status": task_data.get("status") if task_data else None,
-            "effort_hours": task_data.get("effort_hours") if task_data else None,
+            "effort_hours": effort_val if effort_val is not None else (task_data.get("effort_hours") if task_data else None),
         }
         return self.diagnostics, summary
 
-    def validate_dev_summary(self, content: str, path: str) -> Tuple[List[Diagnostic], Dict[str, Any]]:
+    def validate_build_summary(self, content: str, path: str = "build-summary.md") -> Tuple[List[Diagnostic], Dict[str, Any]]:
         self.diagnostics = []
         lines = content.splitlines()
 
-        # Frontmatter
+        # 1. Frontmatter
         if not lines or lines[0].strip() != "---":
             self.diagnostics.append(
                 Diagnostic(1, 1, "FRONTMATTER_MISSING", "ERROR", "Document MUST start with YAML frontmatter delimiter '---'.", file_name=path)
@@ -205,7 +212,7 @@ class DeveloperValidator:
             return self.diagnostics, {}
 
         yaml_text = "\n".join(lines[1:end_idx])
-        meta = {}
+        meta: Dict[str, Any] = {}
         if yaml is not None:
             try:
                 meta = yaml.safe_load(yaml_text) or {}
@@ -219,43 +226,130 @@ class DeveloperValidator:
                     k, v = l.split(":", 1)
                     meta[k.strip()] = v.strip().strip('"').strip("'")
 
-        req_keys = ["sprint", "persona", "status", "handoff_to", "artifacts"]
+        # Check required frontmatter envelope keys
+        req_keys = ["slug", "status", "approved_by", "artifacts"]
         for rk in req_keys:
             if rk not in meta:
                 self.diagnostics.append(
                     Diagnostic(1, 1, "SCHEMA_MISSING_KEY", "ERROR", f"Missing mandatory key '{rk}'.", file_name=path)
                 )
 
-        if meta.get("persona") != "developer":
+        status = meta.get("status")
+        if status and status not in VALID_STATUSES:
             self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_INVALID_PERSONA", "ERROR", f"Persona must be 'developer', found '{meta.get('persona')}'.", file_name=path)
+                Diagnostic(1, 1, "SCHEMA_INVALID_STATUS", "ERROR", f"Frontmatter 'status' must be one of {sorted(VALID_STATUSES)}, found '{status}'.", file_name=path)
             )
 
-        if meta.get("handoff_to") != "qa":
+        approved_by = meta.get("approved_by")
+        if approved_by and approved_by not in {"pending", "human"}:
             self.diagnostics.append(
-                Diagnostic(1, 1, "SCHEMA_INVALID_HANDOFF", "ERROR", f"Handoff must be 'qa', found '{meta.get('handoff_to')}'.", file_name=path)
+                Diagnostic(1, 1, "SCHEMA_INVALID_APPROVED_BY", "ERROR", f"Frontmatter 'approved_by' must be 'pending' or 'human', found '{approved_by}'.", file_name=path)
             )
 
-        headings = [l.strip() for l in lines if l.startswith("#")]
+        artifacts = meta.get("artifacts")
+        if "artifacts" in meta:
+            if not isinstance(artifacts, list) or len(artifacts) == 0:
+                self.diagnostics.append(
+                    Diagnostic(1, 1, "SCHEMA_INVALID_ARTIFACTS", "ERROR", "Frontmatter 'artifacts' must be a non-empty list.", file_name=path)
+                )
+
+        # 2. Strict Headings
         required_patterns = [
-            (r"^#\s+Sprint Implementation Summary:", "Title '# Sprint Implementation Summary: <Title>'"),
+            (r"^#\s+Build Summary:\s*.+", "Title '# Build Summary: <Title>'"),
             (r"^##\s+1\.\s+Execution Overview", "Section '## 1. Execution Overview'"),
             (r"^##\s+2\.\s+Completed Atomic Tasks", "Section '## 2. Completed Atomic Tasks'"),
             (r"^##\s+3\.\s+Test Verification Evidence", "Section '## 3. Test Verification Evidence'"),
             (r"^##\s+4\.\s+Modified Components", "Section '## 4. Modified Components'"),
         ]
+
+        found_indices = []
         for pat, label in required_patterns:
-            if not any(re.search(pat, h) for h in headings):
+            matched_line = None
+            for idx, line in enumerate(lines, start=1):
+                if re.search(pat, line.strip()):
+                    matched_line = idx
+                    break
+            if matched_line is None:
                 self.diagnostics.append(
                     Diagnostic(1, 1, "STRUCTURE_MISSING_SECTION", "ERROR", f"Missing section: {label}.", file_name=path)
                 )
+            else:
+                found_indices.append(matched_line)
+
+        if len(found_indices) == len(required_patterns):
+            if found_indices != sorted(found_indices):
+                self.diagnostics.append(
+                    Diagnostic(1, 1, "SECTION_ORDER_INVALID", "ERROR", "Sections in build-summary.md appear out of sequential order.", file_name=path)
+                )
+
+        # 3. Check for ASCII art
+        self._check_for_ascii_art(lines, path)
 
         summary = {
-            "sprint": meta.get("sprint", "unknown"),
+            "slug": meta.get("slug", "unknown"),
             "status": meta.get("status", "unknown"),
-            "persona": meta.get("persona", "unknown"),
+            "approved_by": meta.get("approved_by", "unknown"),
+            "artifacts_count": len(artifacts) if isinstance(artifacts, list) else 0,
         }
         return self.diagnostics, summary
+
+    def validate_build_dir(self, build_dir: str, check_summary: bool = True, check_active: bool = True) -> Tuple[List[Diagnostic], Dict[str, Any]]:
+        self.diagnostics = []
+        summary: Dict[str, Any] = {
+            "build_dir": build_dir,
+            "slug": "unknown",
+            "status": "unknown",
+            "active_task_id": None,
+        }
+
+        if check_summary:
+            summary_path = os.path.join(build_dir, "build-summary.md")
+            if not os.path.exists(summary_path):
+                self.diagnostics.append(
+                    Diagnostic(1, 1, "BUILD_SUMMARY_NOT_FOUND", "ERROR", f"File '{summary_path}' does not exist.", file_name=summary_path)
+                )
+            else:
+                with open(summary_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                diags, sum_meta = self.validate_build_summary(content, summary_path)
+                self.diagnostics.extend(diags)
+                summary["slug"] = sum_meta.get("slug", "unknown")
+                summary["status"] = sum_meta.get("status", "unknown")
+
+        if check_active:
+            active_path = os.path.join(build_dir, "active.md")
+            if os.path.exists(active_path):
+                with open(active_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                diags, act_meta = self.validate_active_task(content, active_path)
+                self.diagnostics.extend(diags)
+                summary["active_task_id"] = act_meta.get("active_task_id")
+
+        return self.diagnostics, summary
+
+    def _check_for_ascii_art(self, lines: List[str], path: str):
+        ascii_box_re = re.compile(r"(\+[-=]{3,}\+|\|={3,}\||\+---+|┌─+┐|└─+┘|├───┤)")
+        in_code = False
+        for idx, line in enumerate(lines, start=1):
+            s = line.strip()
+            if s.startswith("```"):
+                in_code = not in_code
+                continue
+            if in_code:
+                continue
+
+            # Skip standard markdown table row delimiters like |---|---|
+            if re.match(r"^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$", s):
+                continue
+
+            if s.startswith("+--") or s.startswith("+==") or ascii_box_re.search(line):
+                self.diagnostics.append(
+                    Diagnostic(
+                        idx, 1, "FORBIDDEN_ASCII_ART", "ERROR",
+                        "ASCII art box diagrams are forbidden. Use Mermaid diagrams and plain text.",
+                        snippet=line, file_name=path
+                    )
+                )
 
     def _check_ace_line(self, text: str, line: int, path: str):
         words = re.findall(r"\b[A-Za-z0-9'-]+\b", text)
@@ -284,7 +378,7 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
     warnings = [d for d in diagnostics if d.severity == "WARNING"]
     lines = []
     lines.append("=" * 70)
-    lines.append(f"DEVELOPER TASK & SUMMARY VALIDATOR: {target}")
+    lines.append(f"BUILD TASK & SUMMARY VALIDATOR: {target}")
     lines.append("=" * 70)
     for k, v in summary.items():
         lines.append(f"{k.capitalize():15}: {v}")
@@ -298,7 +392,7 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
             if e.snippet:
                 lines.append(f"    Snippet: {e.snippet}")
     else:
-        lines.append("No errors found. Developer specification is clean!")
+        lines.append("No errors found. Build specification is clean!")
 
     if warnings:
         lines.append(f"WARNINGS ({len(warnings)}):")
@@ -313,76 +407,86 @@ def format_cli_output(target: str, diagnostics: List[Diagnostic], summary: Dict[
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Developer Task and Summary Validator")
-    parser.add_argument("target", nargs="?", default=None, help="Target file (active.md or dev-summary.md)")
-    parser.add_argument("--sprint", "-s", type=str, default=None, help="Sprint identifier (e.g. sprint-1)")
+    parser = argparse.ArgumentParser(description="Build Task and Summary Validator")
+    parser.add_argument("target", nargs="?", default=None, help="Target file (active.md or build-summary.md) or build stage directory")
+    parser.add_argument("--slug", "-s", type=str, default=None, help="Work slug identifier")
     parser.add_argument("--check-active", action="store_true", help="Validate active.md only")
-    parser.add_argument("--check-summary", action="store_true", help="Validate dev-summary.md only")
+    parser.add_argument("--check-summary", action="store_true", help="Validate build-summary.md only")
     parser.add_argument("--all", action="store_true", help="Run all checks (default)")
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON results")
 
     args = parser.parse_args()
 
-    sprint_dir = None
-    if args.sprint:
-        cand = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints", args.sprint)
+    run_summary = True
+    run_active = True
+    if args.check_summary or args.check_active:
+        run_summary = args.check_summary
+        run_active = args.check_active
+
+    build_dir = None
+    target_file = None
+
+    if args.slug:
+        cand = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", args.slug, "04-build")
         if os.path.isdir(cand):
-            sprint_dir = cand
-    elif args.target:
+            build_dir = cand
+
+    if args.target and not build_dir:
         target_path = os.path.abspath(args.target)
         if os.path.isdir(target_path):
-            sprint_dir = target_path
+            build_dir = target_path
         elif os.path.isfile(target_path):
-            validator = DeveloperValidator()
-            with open(target_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            if "dev-summary" in os.path.basename(target_path):
-                diags, summary = validator.validate_dev_summary(content, target_path)
-            else:
-                diags, summary = validator.validate_active_task(content, target_path)
+            target_file = target_path
+        else:
+            sys.stderr.write(f"Error: Target path '{args.target}' does not exist.\n")
+            sys.exit(2)
 
-            error_count = len([d for d in diags if d.severity == "ERROR"])
-            warn_count = len([d for d in diags if d.severity == "WARNING"])
-            if args.json:
-                print(json.dumps({
-                    "target": target_path,
-                    "valid": error_count == 0,
-                    "error_count": error_count,
-                    "warning_count": warn_count,
-                    "summary": summary,
-                    "errors": [d.to_dict() for d in diags]
-                }, indent=2))
-            else:
-                print(format_cli_output(target_path, diags, summary))
-            sys.exit(1 if error_count > 0 else 0)
+    validator = BuildValidator()
 
-    if sprint_dir is None:
-        sprints_root = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers", "sprints")
-        if os.path.isdir(sprints_root):
-            entries = sorted([d for d in os.listdir(sprints_root) if os.path.isdir(os.path.join(sprints_root, d))], reverse=True)
-            for sp in entries:
-                sprint_dir = os.path.join(sprints_root, sp)
-                break
+    if target_file:
+        with open(target_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        if "summary" in os.path.basename(target_file):
+            diags, summary = validator.validate_build_summary(content, target_file)
+        else:
+            diags, summary = validator.validate_active_task(content, target_file)
 
-    if sprint_dir is None:
-        sys.stderr.write("Error: Could not locate sprint directory.\n")
+        error_count = len([d for d in diags if d.severity == "ERROR"])
+        warn_count = len([d for d in diags if d.severity == "WARNING"])
+        if args.json:
+            print(json.dumps({
+                "target": target_file,
+                "valid": error_count == 0,
+                "error_count": error_count,
+                "warning_count": warn_count,
+                "summary": summary,
+                "errors": [d.to_dict() for d in diags]
+            }, indent=2))
+        else:
+            print(format_cli_output(target_file, diags, summary))
+        sys.exit(1 if error_count > 0 else 0)
+
+    if build_dir is None:
+        base_dir = os.path.join(os.getcwd(), "docs", ".prompts-and-prayers")
+        if os.path.isdir(base_dir):
+            entries = sorted([d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))], reverse=True)
+            for entry in entries:
+                cand = os.path.join(base_dir, entry, "04-build")
+                if os.path.isdir(cand):
+                    build_dir = cand
+                    break
+
+    if build_dir is None:
+        sys.stderr.write("Error: Could not locate build directory.\n")
         sys.exit(2)
 
-    summary_file = os.path.join(sprint_dir, "04-tasks", "dev-summary.md")
-    if not os.path.exists(summary_file):
-        sys.stderr.write(f"Error: Target file '{summary_file}' does not exist.\n")
-        sys.exit(2)
-
-    validator = DeveloperValidator()
-    with open(summary_file, "r", encoding="utf-8") as f:
-        content = f.read()
-    diags, summary = validator.validate_dev_summary(content, summary_file)
-
+    diags, summary = validator.validate_build_dir(build_dir, check_summary=run_summary, check_active=run_active)
     error_count = len([d for d in diags if d.severity == "ERROR"])
     warn_count = len([d for d in diags if d.severity == "WARNING"])
+
     if args.json:
         print(json.dumps({
-            "target": summary_file,
+            "target": build_dir,
             "valid": error_count == 0,
             "error_count": error_count,
             "warning_count": warn_count,
@@ -390,7 +494,7 @@ def main():
             "errors": [d.to_dict() for d in diags]
         }, indent=2))
     else:
-        print(format_cli_output(summary_file, diags, summary))
+        print(format_cli_output(build_dir, diags, summary))
 
     sys.exit(1 if error_count > 0 else 0)
 

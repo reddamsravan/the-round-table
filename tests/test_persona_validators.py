@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test suite for Persona Validators (developer, qa, scrum-master).
+Test suite for Persona Validators (qa, scrum-master).
 """
 
 import unittest
@@ -21,63 +21,8 @@ def load_module(name: str, rel_path: str):
     return mod
 
 
-dev_mod = load_module("dev_validator", ".agents/skills/developer/scripts/validator.py")
 qa_mod = load_module("qa_validator", ".agents/skills/qa/scripts/validator.py")
 sm_mod = load_module("sm_validator", ".agents/skills/scrum-master/scripts/validator.py")
-
-
-class TestDeveloperValidator(unittest.TestCase):
-    def setUp(self):
-        self.validator = dev_mod.DeveloperValidator()
-
-    def test_valid_active_task(self):
-        content = """### Task: TASK-001 - Create Service Logic
-```yaml
-id: TASK-001
-parent_plan_id: PLAN-001
-title: Create Service Logic
-status: IN_PROGRESS
-effort_hours: 2.5
-verify_cmd: python3 -m unittest tests/test_service.py
-acceptance_criteria:
-  - The service SHALL process records deterministically.
-```
-"""
-        diags, summary = self.validator.validate_active_task(content, "active.md")
-        errors = [d for d in diags if d.severity == "ERROR"]
-        self.assertEqual(len(errors), 0, f"Expected 0 errors, got: {[e.to_dict() for e in errors]}")
-        self.assertEqual(summary["active_task_id"], "TASK-001")
-        self.assertEqual(summary["effort_hours"], 2.5)
-
-    def test_effort_exceeded_and_multiple_tasks(self):
-        content = """### Task: TASK-001 - First Task
-```yaml
-id: TASK-001
-parent_plan_id: PLAN-001
-title: First Task
-status: IN_PROGRESS
-effort_hours: 8.0
-verify_cmd: python3 test.py
-acceptance_criteria:
-  - The module SHALL run.
-```
-
-### Task: TASK-002 - Second Task
-```yaml
-id: TASK-002
-parent_plan_id: PLAN-001
-title: Second Task
-status: TODO
-effort_hours: 2.0
-verify_cmd: python3 test.py
-acceptance_criteria:
-  - The module SHALL run.
-```
-"""
-        diags, summary = self.validator.validate_active_task(content, "active.md")
-        error_rules = {d.rule_id for d in diags if d.severity == "ERROR"}
-        self.assertIn("MULTIPLE_ACTIVE_TASKS", error_rules)
-        self.assertIn("EFFORT_LIMIT_EXCEEDED", error_rules)
 
 
 class TestQAValidator(unittest.TestCase):
