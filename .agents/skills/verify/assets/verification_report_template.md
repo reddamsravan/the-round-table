@@ -1,14 +1,12 @@
 ---
-sprint: {SPRINT_ID}
-persona: qa
+slug: {WORK_SLUG}
 status: DRAFT
 approved_by: pending
-handoff_to: scrum-master
 artifacts:
-  - docs/.prompts-and-prayers/sprints/{SPRINT_ID}/05-reviews/{DATE}_{SLUG}.md
+  - docs/.prompts-and-prayers/{WORK_SLUG}/05-verify/verification-report.md
 ---
 
-# QA Verification & Code Review Report: {SPRINT_TITLE}
+# Verification Report: {WORK_TITLE}
 
 ## 1. Automated Test Execution Evidence
 

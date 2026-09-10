@@ -19,10 +19,10 @@ the-round-table/
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical spec and plan checker
-│       ├── qa/            # Test and code review checker
 │       ├── review/        # 8-concern code review skill
 │       ├── scrum-master/  # Sprint release and retro checker
 │       ├── task/          # Task graph skill and checker
+│       ├── verify/        # Test and code review checker
 │       └── write/         # Clear text skill and checker
 ├── docs/
 │   └── .prompts-and-prayers/
@@ -42,7 +42,7 @@ The team works through five steps:
 1. **Define**: The `define` and `design` skills draft requirements and screen flows.
 2. **Review**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `build` skill writes code and runs unit tests.
-4. **Verify**: The `qa` skill checks test runs and reviews code changes.
+4. **Verify**: The `verify` skill checks test runs and reviews code changes.
 5. **Repeat**: The `scrum-master` skill logs releases and prepares git commits.
 
 The human acts as the leader. The agent stops for your approval at each key step.
@@ -60,7 +60,7 @@ You can also run any skill on its own:
 ```text
 /define        # Ask the define skill for a requirements spec
 /design        # Ask the design skill for a screen flow
-/qa            # Ask QA to review current code changes
+/verify        # Ask verify to review current code changes
 ```
 
 ## Testing & Quality Gates
@@ -94,6 +94,9 @@ python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
 
 # Check build rules
 python3 .agents/skills/build/scripts/validator.py docs/.../04-build/ --json
+
+# Check verify rules
+python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
 
 # Check explanation rules
 python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json
