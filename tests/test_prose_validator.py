@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 """
-Test suite for Plain English Validator (write skill).
+Test suite for Prose Validator (ASD-STE100 and Attempto Controlled English modes).
 """
 
 import unittest
 import os
 import importlib.util
 
-validator_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".agents", "skills", "write", "scripts", "validator.py"))
-spec = importlib.util.spec_from_file_location("plain_english_validator_module", validator_path)
-plain_validator_mod = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(plain_validator_mod)
+validator_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".agents", "skills", "prose", "scripts", "validator.py"))
+spec = importlib.util.spec_from_file_location("prose_validator_module", validator_path)
+prose_validator_mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(prose_validator_mod)
 
-PlainEnglishValidator = plain_validator_mod.PlainEnglishValidator
-count_syllables_in_word = plain_validator_mod.count_syllables_in_word
+ProseValidator = prose_validator_mod.ProseValidator
+PlainEnglishValidator = prose_validator_mod.PlainEnglishValidator
+AceValidator = prose_validator_mod.AceValidator
+count_syllables_in_word = prose_validator_mod.count_syllables_in_word
 
 
-class TestPlainEnglishValidator(unittest.TestCase):
+class TestProseValidatorSTE(unittest.TestCase):
     def setUp(self):
-        self.validator = PlainEnglishValidator()
+        self.validator = ProseValidator(mode="ste")
 
     def test_clean_plain_english_text(self):
         text = """
@@ -134,6 +136,67 @@ The worker process logs the result.
         self.assertEqual(count_syllables_in_word("investigate"), 4)
 
 
+class TestProseValidatorACE(unittest.TestCase):
+    def setUp(self):
+        self.validator = ProseValidator(mode="ace")
+
+    def test_clean_svo_text(self):
+        text = """
+# Test Skill
+
+The agent SHALL execute the specified command.
+The system MUST return a JSON response.
+IF the command fails, THEN the agent SHALL log the error.
+
+GIVEN a valid file path.
+WHEN the user invokes the tool.
+THEN the tool SHALL output the file contents.
+INVARIANT the tool SHALL NOT modify the source file.
+"""
+        diagnostics, _ = self.validator.validate_text(text)
+        errors = [d for d in diagnostics if d.severity == "ERROR"]
+        self.assertEqual(len(errors), 0, f"Expected 0 errors, got: {[d.to_dict() for d in errors]}")
+
+    def test_passive_voice_detection(self):
+        text = "The file is processed by the agent."
+        diagnostics, _ = self.validator.validate_text(text)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("PASSIVE_VOICE", rule_ids)
+
+    def test_forbidden_modal_detection(self):
+        text = "The agent should run tests before committing."
+        diagnostics, _ = self.validator.validate_text(text)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("FORBIDDEN_MODAL", rule_ids)
+
+    def test_ambiguity_word_detection(self):
+        text = "The system SHALL provide a user-friendly interface with fast responses etc."
+        diagnostics, _ = self.validator.validate_text(text)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("AMBIGUOUS_WORD", rule_ids)
+
+    def test_atomic_sentence_length(self):
+        text = "The system SHALL execute the command and process every result and deliver data to all callers across all components without any interruption whatsoever and continue indefinitely."
+        diagnostics, _ = self.validator.validate_text(text)
+        rule_ids = [d.rule_id for d in diagnostics]
+        self.assertIn("ATOMIC_SENTENCE", rule_ids)
+
+
+class TestBackwardCompatibility(unittest.TestCase):
+    def test_plain_english_validator_alias(self):
+        validator = PlainEnglishValidator()
+        text = "The worker process reads the file."
+        diagnostics, metrics = validator.validate_text(text)
+        self.assertEqual(len(diagnostics), 0)
+        self.assertIn("flesch_reading_ease", metrics)
+
+    def test_ace_validator_alias(self):
+        validator = AceValidator()
+        text = "The agent SHALL execute the task."
+        diagnostics = validator.validate_text(text)
+        self.assertIsInstance(diagnostics, list)
+        self.assertEqual(len(diagnostics), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
-

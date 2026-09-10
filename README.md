@@ -9,7 +9,6 @@ It gives agents simple workflows, exact specs, clear writing, and fast test chec
 the-round-table/
 ├── .agents/
 │   └── skills/
-│       ├── ace-write/     # ACE spec skill and checker
 │       ├── build/         # Task execution and test checker
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
@@ -18,11 +17,11 @@ the-round-table/
 │       ├── grill/         # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical spec and plan checker
+│       ├── prose/         # STE and ACE prose checker
 │       ├── review/        # 8-concern code review skill
 │       ├── ship/          # Release notes and commit coordinator
 │       ├── task/          # Task graph skill and checker
-│       ├── verify/        # Test and code review checker
-│       └── write/         # Clear text skill and checker
+│       └── verify/        # Test and code review checker
 ├── docs/
 │   └── .prompts-and-prayers/
 │       ├── backlog/       # Feature backlog ledger
@@ -70,14 +69,14 @@ python3 -m unittest discover tests
 You can also run each test script by hand:
 
 ```bash
-# Check text score
-python3 .agents/skills/write/scripts/validator.py README.md --json
+# Check prose score (ASD-STE100)
+python3 .agents/skills/prose/scripts/validator.py README.md --json
+
+# Check ACE contract rules
+python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
 
 # Check task graph rules
 python3 .agents/skills/task/scripts/validator.py docs/.tasks/active.md --json
-
-# Check ACE spec rules
-python3 .agents/skills/ace-write/scripts/validator.py docs/.../artifact.md --json
 
 # Check requirement spec rules
 python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --json
@@ -106,7 +105,7 @@ python3 .agents/skills/commit/scripts/validator.py --check < commit_message.txt
 Follow these steps to add a new skill to the project:
 
 1. **Make a Skill Folder**: Add a folder under `.agents/skills/<skill-name>/`.
-2. **Write the Contract**: Add `SKILL.md` using `ace-write` rules with active voice and clear constraints.
+2. **Write the Contract**: Add `SKILL.md` using `prose` (ACE mode) rules with active voice and clear constraints.
 3. **Add a Check Script**: Put your Python script in `.agents/skills/<skill-name>/scripts/validator.py`.
 4. **Write Unit Tests**: Add test cases to `tests/test_<skill_name>_validator.py`.
 5. **Run the Test Suite**: Run `python3 -m unittest discover tests` and make sure all tests pass.
