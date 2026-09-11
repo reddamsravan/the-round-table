@@ -20,9 +20,8 @@ The agent SHALL implement engineering tasks in `docs/.prompts-and-prayers/{work_
 ## Procedures
 
 ### Procedure A: Ambiguity and Escalation Handling
-1. Pause execution and invoke the `interview` skill to formulate structured questions.
-2. Present options, trade-offs, and recommendations to the user.
-3. Await user confirmation on settled decisions before resuming work.
+1. Pause execution and invoke the `interview` skill to resolve ambiguities.
+2. Resume execution after the user confirms settled decisions.
 
 ### Procedure B: Task Graph Execution Loop
 1. Read `docs/.prompts-and-prayers/{work_slug}/04-build/task.md` and identify unblocked tasks with satisfied prerequisites.

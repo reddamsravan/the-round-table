@@ -21,9 +21,8 @@ The agent SHALL formulate flows, interface contracts, state models, and requirem
 ## Procedures
 
 ### Procedure A: Ambiguity Resolution
-1. Activate the `interview` skill to formulate structured questions.
-2. Present options, trade-offs, and recommendations to the user.
-3. Await user confirmation on settled decisions before drafting the design specification.
+1. Activate the `interview` skill to resolve ambiguities.
+2. Incorporate settled decisions before drafting the design specification.
 
 ### Procedure B: Stakeholder Approval Gate
 1. Set frontmatter status to `DRAFT` in `docs/.prompts-and-prayers/{work_slug}/02-design/design-spec.md`.

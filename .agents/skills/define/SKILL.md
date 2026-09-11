@@ -21,9 +21,8 @@ The agent SHALL formulate objectives, scope boundaries, functional requirements,
 ## Procedures
 
 ### Procedure A: Ambiguity Resolution
-1. Activate the `interview` skill to formulate structured questions.
-2. Present options, trade-offs, and recommendations to the user.
-3. Await user confirmation on settled decisions before drafting the specification.
+1. Activate the `interview` skill to resolve ambiguities.
+2. Incorporate settled decisions before drafting the specification.
 
 ### Procedure B: Stakeholder Approval Gate
 1. Set frontmatter status to `DRAFT` in `docs/.prompts-and-prayers/{work_slug}/01-define/spec.md`.
