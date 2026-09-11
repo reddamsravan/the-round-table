@@ -36,7 +36,7 @@ The agent SHALL implement engineering tasks in `docs/.prompts-and-prayers/{work_
 9. Repeat steps 1 through 8 until all tasks reach completion.
 
 ### Procedure C: Concurrent Subagent Execution
-1. Dispatch parallel subagents using `invoke_subagent` for each unblocked task.
+1. Dispatch parallel subagents for each unblocked task.
 2. Assign each subagent its task scope, file targets, and verification criteria.
 3. Await completion notifications from all dispatched subagents.
 4. Verify that each subagent satisfied all task acceptance criteria.
