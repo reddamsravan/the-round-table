@@ -10,7 +10,7 @@ the-round-table/
 ├── .agents/
 │   └── skills/
 │       ├── breakdown/     # Task graph decomposition skill
-│       ├── build/         # Task execution and test checker
+│       ├── build/         # Task implementation skill
 │       ├── commit/        # Commit note skill and checker
 │       ├── define/        # Requirements specification checker
 │       ├── design/        # User flow and wireframe checker
@@ -84,9 +84,6 @@ python3 .agents/skills/design/scripts/validator.py docs/.../02-design/design-spe
 
 # Check plot spec rules
 python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
-
-# Check build rules
-python3 .agents/skills/build/scripts/validator.py docs/.../04-build/ --json
 
 # Check verify rules
 python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
