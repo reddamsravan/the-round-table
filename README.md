@@ -13,7 +13,7 @@ the-round-table/
 │       ├── build/         # Task implementation skill
 │       ├── commit/        # Commit staging and message drafting skill
 │       ├── define/        # Requirements specification and criteria skill
-│       ├── design/        # User flow and wireframe checker
+│       ├── design/        # Interface and flow design skill
 │       ├── explain/       # Plain explanation skill and checker
 │       ├── interview/     # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
@@ -75,9 +75,6 @@ python3 .agents/skills/prose/scripts/validator.py README.md --json
 
 # Check ACE contract rules
 python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
-
-# Check design spec rules
-python3 .agents/skills/design/scripts/validator.py docs/.../02-design/design-spec.md --json
 
 # Check plot spec rules
 python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
