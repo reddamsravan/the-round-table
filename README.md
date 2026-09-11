@@ -11,7 +11,7 @@ the-round-table/
 │   └── skills/
 │       ├── breakdown/     # Task graph decomposition skill
 │       ├── build/         # Task implementation skill
-│       ├── commit/        # Commit note skill and checker
+│       ├── commit/        # Commit staging and message drafting skill
 │       ├── define/        # Requirements specification checker
 │       ├── design/        # User flow and wireframe checker
 │       ├── explain/       # Plain explanation skill and checker
@@ -90,9 +90,6 @@ python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
 
 # Check explanation rules
 python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json
-
-# Check commit note rules
-python3 .agents/skills/commit/scripts/validator.py --check < commit_message.txt
 
 # Check skill frontmatter rules
 python3 .agents/skills/write-a-skill/scripts/validator.py .agents/skills/.../ --json

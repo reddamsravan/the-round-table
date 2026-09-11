@@ -1,42 +1,47 @@
 ---
 name: commit
-description: Guides git staging, decomposes multi-concern changes, and drafts Conventional Commit messages.
+description: Stages git changes, splits multi-concern diffs, and drafts concise Conventional Commit messages. Activate on '/commit'.
 ---
 
-INVARIANT: obtain explicit user confirmation before any `git commit`.
+The agent SHALL stage git changes, split multi-concern diffs, and draft Conventional Commit messages.
 
-## Message Rules
+## Rules
+- INVARIANT: The agent SHALL obtain explicit user confirmation before running `git commit`.
+- The agent SHALL format commit messages adhering to [references/conventional_commits.md](references/conventional_commits.md).
+- The agent SHALL derive all commit message content strictly from `git diff`.
+- The agent SHALL invoke the `prose` skill to prepare the commit message subject and body.
 
-1. **Header syntax**: `<type>(<scope>): <subject>` or `<type>: <subject>`.
-   Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
-   Scope: lowercase alphanumeric with hyphens or slashes.
-2. **Length**: header target <= 50 chars; hard ceiling 72. Body lines <= 72 chars.
-   Blank line required between header and body/footers.
-3. **Subject**: lowercase imperative verb, no trailing period, no past tense.
-4. **Breaking changes**: add `!` before colon or append `BREAKING CHANGE: <description>` footer.
-5. **No local task IDs**: reserve `Fixes #<id>` / `Closes #<id>` for external trackers only.
-6. **Diff-only content**: derive all message content strictly from `git diff`. The agent SHALL NOT inject context, assumptions, or knowledge from outside the diff.
+## Workflow
+1. Inspect working tree status using `git status --short`.
+2. Inspect modifications using `git diff` or `git diff --cached`.
+3. IF the diff contains multiple independent concerns, THEN execute Procedure A.
+4. Stage target modifications using `git add <paths>`.
+5. Execute Procedure B to draft the Conventional Commit message.
+6. Present staged modifications and the draft commit message to the user for explicit confirmation.
+7. Execute Procedure C upon user confirmation.
 
 ## Procedures
 
-### A: Inspect and Stage
-1. Run `git status --short`.
-2. IF staging area is empty, THEN inspect with `git diff`; else inspect with `git diff --cached`.
-3. IF the diff has multiple independent concerns, THEN propose atomic commit splits.
-4. Stage with `git add <paths>`.
+### Procedure A: Multi-Concern Splitting
+1. Identify independent concerns across modified files.
+2. Group related file modifications into atomic patch sets.
+3. Stage each patch set sequentially for distinct commits.
 
-### B: Draft Message
-1. Identify the change intent, affected component, type, and scope.
-2. Draft subject and body using the `write` skill; validate with
-   `python3 .agents/skills/write/scripts/validator.py --json`; fix until Flesch >= 65 and 0 errors.
-3. Form header: prepend `<type>(<scope>): ` to the validated subject.
-4. Apply footers per rules 4 and 5 if needed.
+### Procedure B: Message Preparation
+1. Identify the primary change intent and select the commit type adhering to [references/conventional_commits.md](references/conventional_commits.md).
+2. Identify the codebase subsystem to select an optional single-word noun scope.
+3. Invoke the `prose` skill to prepare the concise imperative subject line.
+4. IF the modification requires explanation, THEN invoke the `prose` skill to prepare the rationale body.
+5. IF breaking changes exist, THEN apply the breaking change format adhering to [references/conventional_commits.md](references/conventional_commits.md).
 
-### C: Validate
-1. Validate: `echo "<message>" | python3 .agents/skills/commit/scripts/validator.py --json`
-2. IF errors exist, THEN autofix and re-validate until 0 errors remain.
+### Procedure C: Commit Execution
+1. Run `git commit -m "<header>"` or `git commit -m "<header>" -m "<body>"`.
+2. Confirm commit creation using `git status --short`.
+3. Display the generated commit SHA and summary to the user.
 
-### D: Present and Execute
-1. Show staged file list and full commit message; wait for explicit confirmation.
-2. On confirm: `git commit -m "<header>" -m "<body>"`
-3. On reject: revise message or staging.
+## Verification Checklist
+- [ ] Verify that staged modifications belong to a single atomic concern.
+- [ ] Verify that the commit header follows Conventional Commits syntax per [references/conventional_commits.md](references/conventional_commits.md).
+- [ ] Verify that the prose skill prepared the commit message subject and body.
+- [ ] Obtain explicit user confirmation before executing `git commit`.
+- [ ] Confirm commit creation with `git status --short`.
