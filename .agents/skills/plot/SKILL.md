@@ -1,46 +1,43 @@
 ---
 name: plot
-description: Plans technical architecture, component contracts, and implementation milestones.
+description: Plans technical architecture, subsystem boundaries, and implementation milestones. Activate on '/plot'.
+disable-model-invocation: true
 ---
 
-The agent SHALL formulate technical architecture in `docs/.prompts-and-prayers/{work_slug}/03-plot/tech-spec.md` and implementation plans in `docs/.prompts-and-prayers/{work_slug}/03-plot/plan.md`.
+The agent SHALL formulate technical architecture and high-level implementation plans.
 
-## Specification Invariants
+## Rules
+- The agent SHALL NOT modify application source code during technical planning.
+- The agent SHALL NOT include file implementation code, method signatures, or parameter types in architecture specifications.
 
-Every plot artifact set MUST satisfy these rules:
+## Workflow
+1. Inspect the definitions and designs provided by the user.
+2. IF the input contains ambiguities or unresolved trade-offs, THEN execute Procedure A.
+3. Copy `.agents/skills/plot/assets/tech_spec_template.md` to `docs/.prompts-and-prayers/{work_slug}/03-plot/tech-spec.md`.
+4. Draft the technical specification adhering to [assets/tech_spec_template.md](assets/tech_spec_template.md).
+5. Invoke the `breakdown` skill to generate the high-level plan in `docs/.prompts-and-prayers/{work_slug}/03-plot/plan.md` adhering to [assets/plan_template.md](assets/plan_template.md).
+6. Validate the technical specification and plan using the `prose` skill with `--mode ace`.
+7. Execute Procedure B to complete the stakeholder approval gate.
+8. Deliver the approved artifact paths to the caller.
 
-1. **Frontmatter Envelope**:
-   - `slug`: Work slug identifier.
-   - `status`: One of `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `REJECTED`.
-   - `approved_by`: `pending` or `human`.
-   - `artifacts`: List containing paths for `tech-spec.md` and `plan.md`.
-2. **Technical Specification Structure**:
-   - `# Technical Specification: <Title>`
-   - `## 1. System Overview & Architecture Topology`
-   - `## 2. Architectural Decision Records (ADRs)`
-   - `## 3. Component Contracts & Interfaces`
-   - `## 4. Technical Constraints & Invariants`
-3. **Visualizations**: Section 1 of `tech-spec.md` MUST contain a Mermaid flowchart.
-4. **Implementation Plan Structure**:
-   - `# Implementation Plan: <Title>`
-   - `## Plan Overview`
-   - `## Engineering Tasks`
-   - Tasks formatted as `### Task: PLAN-<NNN> - <Title>` with YAML `id`, `title`, `status`, `depends_on`, and `acceptance_criteria`.
-5. **Deterministic Criteria**: active SVO items in constraints and criteria using `SHALL` or `MUST`.
-   INVARIANT: criteria SHALL NOT use passive voice or ambiguous words.
+## Procedures
 
-## Execution Procedure
+### Procedure A: Ambiguity Resolution
+1. Activate the `interview` skill to resolve open trade-offs and ambiguities.
+2. Incorporate settled decisions before drafting the technical specification.
 
-GIVEN approved definitions and designs.
-WHEN the agent activates the plot skill:
-1. Intake: the agent SHALL inspect definitions and designs in `01-define/` and `02-design/`.
-2. Trade-offs: IF open trade-offs exist, THEN the agent SHALL activate the `interview` skill.
-3. Generate: the agent SHALL fill `.agents/skills/plot/assets/tech_spec_template.md` and `.agents/skills/plot/assets/plan_template.md` under `docs/.prompts-and-prayers/{work_slug}/03-plot/`.
-4. Validate: the agent SHALL run:
-   ```bash
-   python3 .agents/skills/plot/scripts/validator.py docs/.prompts-and-prayers/{work_slug}/03-plot/ --json
-   ```
-   The agent SHALL fix errors iteratively until zero remain.
-5. Stakeholder Gate: the agent SHALL set `status: PENDING_APPROVAL` and present artifact links to stakeholder.
-   INVARIANT: the agent SHALL NOT proceed to downstream phases without explicit human approval.
-6. Handoff: on confirmation, the agent SHALL set `status: APPROVED`, set `approved_by: human`, and prompt the next phase.
+### Procedure B: Stakeholder Approval Gate
+1. Set frontmatter status to `DRAFT` in `docs/.prompts-and-prayers/{work_slug}/03-plot/tech-spec.md`.
+2. Present the artifact links and summary to the user.
+3. Await explicit human confirmation.
+4. IF the user approves the artifacts, THEN set `status: APPROVED`.
+5. IF the user requests revisions, THEN revise the artifacts and re-execute Procedure B.
+
+## Verification Checklist
+- [ ] Verify that `docs/.prompts-and-prayers/{work_slug}/03-plot/tech-spec.md` exists.
+- [ ] Verify that `docs/.prompts-and-prayers/{work_slug}/03-plot/plan.md` exists.
+- [ ] Verify that the technical specification contains all mandatory sections per [assets/tech_spec_template.md](assets/tech_spec_template.md).
+- [ ] Verify that the implementation plan contains all mandatory sections per [assets/plan_template.md](assets/plan_template.md).
+- [ ] Verify that the technical specification and plan pass prose validation with `--mode ace`.
+- [ ] Verify that frontmatter status is `APPROVED`.
+- [ ] Obtain explicit user confirmation before downstream handoff.

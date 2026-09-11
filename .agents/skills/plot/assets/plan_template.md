@@ -1,31 +1,18 @@
-# Implementation Plan: {FEATURE_TITLE}
+# Implementation Plan: {TITLE}
 
 ## Plan Overview
+{High-level architectural sequencing and milestone progression.}
 
-{Architectural breakdown of system components, technical milestones, and dependency sequencing for this work unit.}
+## Milestones
 
-## Engineering Tasks
+### Milestone 1: {Title}
+- **Objective**: {High-level milestone outcome}
+- **Prerequisites**: None
+- **Acceptance Criteria**:
+  - The system SHALL {verifiable milestone delivery}.
 
-### Task: PLAN-001 - {Task Title}
-```yaml
-id: PLAN-001
-title: {Task Title}
-status: TODO
-depends_on: []
-acceptance_criteria:
-  - The component SHALL expose the specified interfaces.
-  - The component SHALL validate input parameters against schema.
-verify_cmd: python3 -m unittest tests/test_plan_001.py
-```
-
-### Task: PLAN-002 - {Task Title}
-```yaml
-id: PLAN-002
-title: {Task Title}
-status: TODO
-depends_on:
-  - PLAN-001
-acceptance_criteria:
-  - The component SHALL integrate with PLAN-001 interfaces.
-verify_cmd: python3 -m unittest tests/test_plan_002.py
-```
+### Milestone 2: {Title}
+- **Objective**: {High-level milestone outcome}
+- **Prerequisites**: Milestone 1
+- **Acceptance Criteria**:
+  - The system SHALL {verifiable milestone delivery}.

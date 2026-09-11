@@ -17,7 +17,7 @@ the-round-table/
 │       ├── explain/       # Laconic plain-English explanation skill
 │       ├── interview/     # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
-│       ├── plot/          # Technical spec and plan checker
+│       ├── plot/          # Technical architecture and plan skill
 │       ├── prose/         # STE and ACE prose checker
 │       ├── review/        # 8-concern code review skill
 │       ├── ship/          # Release notes and commit coordinator
@@ -75,9 +75,6 @@ python3 .agents/skills/prose/scripts/validator.py README.md --json
 
 # Check ACE contract rules
 python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
-
-# Check plot spec rules
-python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
 
 # Check verify rules
 python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
