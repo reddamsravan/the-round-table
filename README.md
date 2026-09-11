@@ -12,7 +12,7 @@ the-round-table/
 │       ├── breakdown/     # Task graph decomposition skill
 │       ├── build/         # Task implementation skill
 │       ├── commit/        # Commit staging and message drafting skill
-│       ├── define/        # Requirements specification checker
+│       ├── define/        # Requirements specification and criteria skill
 │       ├── design/        # User flow and wireframe checker
 │       ├── explain/       # Plain explanation skill and checker
 │       ├── interview/     # Design interview skill
@@ -75,9 +75,6 @@ python3 .agents/skills/prose/scripts/validator.py README.md --json
 
 # Check ACE contract rules
 python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
-
-# Check requirement spec rules
-python3 .agents/skills/define/scripts/validator.py docs/.../01-define/spec.md --json
 
 # Check design spec rules
 python3 .agents/skills/design/scripts/validator.py docs/.../02-design/design-spec.md --json

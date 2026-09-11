@@ -1,57 +1,27 @@
 ---
-slug: {WORK_SLUG}
-status: DRAFT
-approved_by: pending
-artifacts:
-  - docs/.prompts-and-prayers/{WORK_SLUG}/01-define/spec.md
+status: {DRAFT|APPROVED}
 ---
 
 # Specification: {TITLE}
 
-## 1. Objective & Value
+## Objective
+{Problem statement, intended value, and target personas.}
 
-{High-level problem statement, target outcome, and intended value.}
+## Scope
+- **In-Scope**:
+  - {Capabilities explicitly included}
+- **Out-of-Scope**:
+  - {Capabilities explicitly deferred}
 
-## 2. Target Personas
+## Requirements
 
-- **Primary Persona**: {Description of user role, goals, and operational context}
-- **Secondary Persona**: {Description of secondary stakeholders}
+### REQ-001: {Title}
+As a {role}, I want {action}, so that {value}.
 
-## 3. Scope Boundaries
-
-### In-Scope
-- {Capability or requirement explicitly included in this work unit}
-
-### Out-of-Scope
-- {Related feature or edge case explicitly deferred to future work units}
-
-## 4. Functional Requirements
-
-### Requirement: REQ-001 - {Requirement Title}
-
-**Narrative**:
-As a {role},
-I want {action},
-So that {value}.
-
-**Acceptance Criteria**:
 - GIVEN {precondition}
   WHEN {trigger event}
   THEN {the system SHALL execute action}
 - INVARIANT the system SHALL maintain {state invariant}.
 
-### Requirement: REQ-002 - {Requirement Title}
-
-**Narrative**:
-As a {role},
-I want {action},
-So that {value}.
-
-**Acceptance Criteria**:
-- GIVEN {precondition}
-  WHEN {trigger event}
-  THEN {the system SHALL execute action}
-
-## 5. Success Metrics & Validation
-
-- {Measurable metric or verification benchmark confirming value delivery}
+## Verification
+- {Measurable metric or test benchmark confirming value delivery}
