@@ -1,36 +1,35 @@
 ---
+# Derived from the grilling skill in mattpocock/skills (https://github.com/mattpocock/skills)
 name: interview
 description: Stress-tests plans and decisions through design tree interviews. Activate on '/interview'.
 ---
 
-The agent SHALL interview the user across a structured design tree to stress-test plans, architectures, and decisions.
+The agent SHALL interview the user across a design tree.
 
 ## Rules
-- The agent SHALL NOT query the user for information discoverable via codebase inspection or tool calls.
+- The agent SHALL NOT query the user for information discoverable via environment inspection or tool calls.
 - IF a question depends on open decisions, THEN the agent SHALL defer that question to a subsequent round.
-- The agent SHALL NOT execute implementation actions until the user confirms the settled design tree.
-- The agent SHALL NOT generate an artifact unless the user explicitly requests one.
-- IF generating an artifact, THEN the agent SHALL apply the `prose` skill in ACE mode.
+- The session is complete only WHEN the decision frontier is empty, no branches remain unvisited, with nothing left silently assumed.
 
 ## Workflow
-1. Execute Procedure A to discover factual prerequisites autonomously.
-2. Map the initial design tree and identify independent frontier questions.
-3. Execute Procedure B in iterative rounds until the decision frontier is empty.
-4. Confirm the settled design tree with the user.
+1. Map the initial design tree and identify open decisions.
+2. IF any frontier decision requires facts from the environment, THEN execute Procedure A.
+3. Execute Procedure B to query the frontier in iterative rounds until the frontier is empty.
+4. Confirm the settled design tree and shared understanding with the user.
 5. IF the user requests an artifact, THEN execute Procedure C.
 
 ## Procedures
 
-### Procedure A: Autonomous Fact Discovery
-1. Inspect the codebase, file system, and environment using tool calls.
-2. IF investigations require deep research, THEN dispatch a research subagent.
-3. Resolve all factual prerequisites before formulating interview questions.
+### Procedure A: Non-Blocking Fact Discovery
+1. Dispatch a research subagent to discover required facts.
+2. Mark questions downstream of running explorations as waiting on unresolved facts.
+3. Advance all remaining unblocked frontier questions immediately without waiting for the subagent.
+4. Upon subagent completion, incorporate discovered facts to satisfy prerequisites.
 
-### Procedure B: Round Execution
-1. Query the entire active frontier in one round; number each question sequentially.
-2. Provide up to four lettered choices for multiple-choice questions.
-3. Designate open questions with an explicit `[Free-form text]` indicator.
-4. Format each question:
+### Procedure B: Iterative Round Execution Loop
+1. Identify all decisions with satisfied prerequisites to form the active frontier.
+2. Number each frontier question sequentially and provide a recommended answer with rationale.
+3. Format each question:
    ```markdown
    **Q<N>**: **<question title>**: <question body explaining context and trade-offs>
    - Choices:
@@ -41,11 +40,13 @@ The agent SHALL interview the user across a structured design tree to stress-tes
      - **[Free-form text]** (if open response required)
    - Recommendation: <recommended answer with rationale>
    ```
-5. Await user response before opening a subsequent round.
-6. Recompute the active frontier and advance unblocked questions.
+4. Present the entire active frontier in one round and await user response.
+5. Reshape the design tree using user answers and push the frontier outward.
+6. Recompute the active frontier to unblock dependent questions.
+7. Repeat steps 1 through 6 until the decision frontier is empty.
 
 ### Procedure C: Artifact Generation (Optional)
-1. Write the decision tree to `docs/.prompts-and-prayers/interviews/{SLUG}_{DATE:YYYY-MM-DD}.md`.
+1. Write the settled design tree to `docs/.prompts-and-prayers/interviews/{SLUG}_{DATE:YYYY-MM-DD}.md`.
 2. Include sections: `# Interview: <Title>`, `## Summary & Context`, `## Resolved Decision Tree`, and `## Open / Deferred Items`.
 3. Validate the artifact:
    ```bash
@@ -54,9 +55,10 @@ The agent SHALL interview the user across a structured design tree to stress-tes
 4. Present the artifact link to the user.
 
 ## Verification Checklist
-- [ ] Execute autonomous discovery before querying the user.
-- [ ] Verify that no questions within the active round depend on unresolved decisions.
-- [ ] Query every frontier question with choices or a free-form indicator, trade-offs, and a recommended answer.
-- [ ] Verify that all frontier branches are empty before ending the interview.
-- [ ] Obtain explicit user confirmation on the settled design tree.
-- [ ] IF the user requested an artifact, THEN verify that the artifact at `docs/.prompts-and-prayers/interviews/{SLUG}_{DATE:YYYY-MM-DD}.md` passes ACE validation.
+- [ ] Verify that the agent looked up discoverable environment facts autonomously.
+- [ ] Verify that running fact explorations did not block independent frontier questions.
+- [ ] Verify that each round queried the entire active frontier with numbered questions and recommendations.
+- [ ] Verify that no questions depended on open decisions from the same round.
+- [ ] Verify that the agent recomputed the frontier iteratively until empty.
+- [ ] Obtain explicit user confirmation of shared understanding before any implementation.
+- [ ] IF the user requested an artifact, THEN verify that the interview artifact exists and passes ACE validation.
