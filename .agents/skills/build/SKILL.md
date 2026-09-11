@@ -1,6 +1,7 @@
 ---
 name: build
 description: Implements tasks using breakdown, subagents, and interviews. Activate on '/build'.
+disable-model-invocation: true
 ---
 
 The agent SHALL implement engineering tasks in `docs/.prompts-and-prayers/{work_slug}/04-build/task.md` using task decomposition, unblocked execution, and criteria verification.
