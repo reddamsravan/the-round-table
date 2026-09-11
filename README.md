@@ -14,7 +14,7 @@ the-round-table/
 │       ├── commit/        # Commit staging and message drafting skill
 │       ├── define/        # Requirements specification and criteria skill
 │       ├── design/        # Interface and flow design skill
-│       ├── explain/       # Plain explanation skill and checker
+│       ├── explain/       # Laconic plain-English explanation skill
 │       ├── interview/     # Design interview skill
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical spec and plan checker
@@ -82,8 +82,6 @@ python3 .agents/skills/plot/scripts/validator.py docs/.../03-plot/ --json
 # Check verify rules
 python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
 
-# Check explanation rules
-python3 .agents/skills/explain/scripts/validator.py docs/.../sample.explained.md --json
 
 # Check skill frontmatter rules
 python3 .agents/skills/write-a-skill/scripts/validator.py .agents/skills/.../ --json
