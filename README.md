@@ -21,7 +21,7 @@ the-round-table/
 │       ├── prose/         # STE and ACE prose checker
 │       ├── review/        # Concern-driven code review skill
 │       ├── ship/          # Commit and retrospective skill
-│       ├── verify/        # Test and code review checker
+│       ├── verify/        # Criteria verification skill
 │       └── write-a-skill/ # Skill authoring and schema checker
 ├── docs/
 │   └── .prompts-and-prayers/
@@ -40,7 +40,7 @@ The skills cover each step:
 1. **Define**: The `define` and `design` skills draft requirements and screen flows.
 2. **Plan**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `build` skill writes code and runs unit tests.
-4. **Verify**: The `verify` skill checks test runs and reviews code changes.
+4. **Verify**: The `verify` skill evaluates acceptance criteria against the workspace.
 5. **Ship**: The `ship` skill prepares git commits and authors retrospectives.
 
 The human acts as the leader. The agent stops for your approval at each key step.
@@ -54,7 +54,7 @@ Run any skill on its own:
 /design        # Ask the design skill for a screen flow
 /plot          # Ask the plot skill for a system plan
 /build         # Ask the build skill to write code and tests
-/verify        # Ask the verify skill to check tests and diffs
+/verify        # Ask the verify skill to check acceptance criteria
 /ship          # Ask the ship skill to commit changes and record retrospectives
 ```
 
@@ -74,10 +74,6 @@ python3 .agents/skills/prose/scripts/validator.py README.md --json
 
 # Check ACE contract rules
 python3 .agents/skills/prose/scripts/validator.py docs/.../artifact.md --mode ace --json
-
-# Check verify rules
-python3 .agents/skills/verify/scripts/validator.py docs/.../05-verify/ --json
-
 
 # Check skill frontmatter rules
 python3 .agents/skills/write-a-skill/scripts/validator.py .agents/skills/.../ --json
