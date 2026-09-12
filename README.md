@@ -16,5 +16,6 @@ The Round Table provides skills for AI coding tools.
 - `/prose`: Checks and writes clear text.
 - `/review`: Reviews code diffs for quality.
 - `/ship`: Makes git commits and writes retro notes.
+- `/tdd`: Drives features and bug fixes through the red-green TDD loop.
 - `/verify`: Checks task rules in the workspace.
 - `/write-a-skill`: Create/Update skills.
