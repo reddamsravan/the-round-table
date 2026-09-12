@@ -19,7 +19,7 @@ the-round-table/
 │       ├── learn/         # 30-day personalized curriculum skill
 │       ├── plot/          # Technical architecture and plan skill
 │       ├── prose/         # STE and ACE prose checker
-│       ├── review/        # 8-concern code review skill
+│       ├── review/        # Concern-driven code review skill
 │       ├── ship/          # Release notes and commit coordinator
 │       ├── verify/        # Test and code review checker
 │       └── write-a-skill/ # Skill authoring and schema checker
