@@ -20,12 +20,11 @@ the-round-table/
 │       ├── plot/          # Technical architecture and plan skill
 │       ├── prose/         # STE and ACE prose checker
 │       ├── review/        # Concern-driven code review skill
-│       ├── ship/          # Release notes and commit coordinator
+│       ├── ship/          # Commit and retrospective skill
 │       ├── verify/        # Test and code review checker
 │       └── write-a-skill/ # Skill authoring and schema checker
 ├── docs/
 │   └── .prompts-and-prayers/
-│       ├── backlog/       # Feature backlog ledger
 │       ├── interviews/    # Saved design logs
 │       └── sprints/       # Sprint workspaces and artifacts
 ├── tests/                 # Unit tests for checkers
@@ -42,7 +41,7 @@ The skills cover each step:
 2. **Plan**: The `plot` skill plans system design and engineering tasks.
 3. **Build**: The `build` skill writes code and runs unit tests.
 4. **Verify**: The `verify` skill checks test runs and reviews code changes.
-5. **Ship**: The `ship` skill logs releases and prepares git commits.
+5. **Ship**: The `ship` skill prepares git commits and authors retrospectives.
 
 The human acts as the leader. The agent stops for your approval at each key step.
 
@@ -56,7 +55,7 @@ Run any skill on its own:
 /plot          # Ask the plot skill for a system plan
 /build         # Ask the build skill to write code and tests
 /verify        # Ask the verify skill to check tests and diffs
-/ship          # Ask the ship skill to draft release notes
+/ship          # Ask the ship skill to commit changes and record retrospectives
 ```
 
 ## Testing & Quality Gates

@@ -1,22 +1,13 @@
 # Retrospective: {WORK_TITLE}
 
-## 1. Execution Metrics
+## 1. Start
 
-- **Completed Stories / Features**: {N}
-- **Completed Atomic Tasks**: {N}
-- **Total Test Suites Executed**: {N}
-- **Blockers Resolved**: {N}
-- **Cycle Time**: {Estimate or duration}
+- {New tasks, tools, or habits to start}
 
-## 2. What Went Well
+## 2. Stop
 
-- {Effective collaboration patterns, clean specs, or fast test feedback observed during execution}
+- {Bad habits, waste, or blockers to stop}
 
-## 3. Opportunities for Improvement
+## 3. Continue
 
-- {Friction points, unexpected debugging cycles, or ambiguous requirements encountered}
-
-## 4. Action Items for Next Iteration
-
-- The team SHALL maintain {specific improvement action}.
-- The team SHALL enforce {specific process refinement}.
+- {Good habits, wins, or patterns to keep}
